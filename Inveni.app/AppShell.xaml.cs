@@ -1,4 +1,4 @@
-﻿namespace Inveni.app
+﻿namespace Inveni.App
 {
     public partial class AppShell : Shell
     {

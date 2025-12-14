@@ -1,0 +1,205 @@
+﻿RIEPILOGO COMPLETO PROGETTO INVENI
+1. CONTESTO E OBIETTIVO
+Progetto originale: Palmipedo (app turistica premiata Nokia 2013)
+
+Modulo estratto: Caccia al tesoro geolocalizzata
+
+Nuovo progetto: InVeni Platform (MAUI app + futuro portale web)
+
+Obiettivo: Piattaforma per creazione/gioco di cacce al tesoro
+
+2. ARCHITETTURA ORIGINALE (Xamarin)
+Database Schema (tabella Giochi):
+14 righe per caccia "Antium" (ID_Giochi=180269)
+
+Struttura: Header → Enigma (area grande) → Caccia (area piccola)
+
+Parametri: PrecisioneCaccia (raggio), InclinazioneDa/A, TentativiCaccia
+
+Logica di gioco:
+Verifica senza foto: GPS + bussola + accelerometro
+
+Aree nidificate: Area Enigma (grande) → Area Caccia (piccola)
+
+Algoritmo: TreasureHuntCalc.cs (calcolo angolo/verifica)
+
+3. MIGRAZIONE A .NET MAUI
+Struttura progetto attuale:
+text
+Inveni.App/
+├── Modelli/           # Modelli DB (Scheda, ItemItinerario, Categoria...)
+├── Elementi/         # Oggetti business (OggettoCaccia, RisultatoVerifica)
+├── Servizi/          # Logica (CalcolatoreTesoro)
+├── ViewModels/       # Vuoto (da creare)
+├── Views/            # Vuoto (da creare)
+├── Platforms/        # MAUI
+└── Resources/        # MAUI
+File essenziali migrati:
+✅ Modelli: Tutti i models DB
+
+✅ Elementi: OggettoCaccia, RisultatoVerifica (adattato per MAUI)
+
+✅ Servizi: CalcolatoreTesoro.cs (logica matematica mantenuta)
+
+✅ MAUI: Project base funzionante
+
+Problemi risolti:
+Dipendenze iOS: Rimosse UIKit, CoreLocation, Foundation
+
+Namespace: Sistemato Inveni.App (case consistency)
+
+Null safety: Aggiunti controlli null
+
+MAUI Sensors: Usato Microsoft.Maui.Devices.Sensors.Location
+
+4. STATO ATTUALE
+✅ Progetto MAUI creato e configurato (.NET 9)
+
+✅ Tutti i models migrati e funzionanti
+
+✅ Logica core preservata (CalcolatoreTesoro.cs)
+
+✅ Compilazione OK (solo avvisi minori)
+
+🔄 UI/Gameplay: Da implementare
+
+5. PROSSIMI PASSI DI SVILUPPO
+FASE 1: UI BASE (1-2 giorni)
+1.1 Lista cacce (CaccePage.xaml)
+csharp
+// ViewModel: CacceViewModel
+// View: CaccePage.xaml
+// Dati: Hardcode 3 cacce esempio (inclusa Antium)
+1.2 Dettaglio caccia (CacciaPage.xaml)
+csharp
+// ViewModel: CacciaViewModel  
+// View: CacciaPage.xaml
+// Mostra: Descrizione, tesori, stato
+1.3 Navigation base
+AppShell con tab/navigation
+
+Passaggio dati tra pagine
+
+FASE 2: GAMEPLAY (2-3 giorni)
+2.1 Servizio posizione MAUI
+csharp
+// ServizioPosizione.cs (GPS + bussola MAUI)
+// Sostituisce LocationManager.cs iOS
+2.2 Schermata gioco (GiocoPage.xaml)
+Mappa con posizione utente
+
+Indicatore direzione/angolo
+
+Feedback visivo (blu/rosso/verde)
+
+Pulsante verifica
+
+2.3 Integrazione logica
+Chiamata CalcolatoreTesoro.Compute()
+
+Gestione stati (enigma/caccia/tentativi)
+
+Transizioni automatiche
+
+FASE 3: DATI REALI (1-2 giorni)
+3.1 Hardcode caccia Antium
+14 record della caccia in JSON/file
+
+Caricamento in app
+
+Test completo gameplay
+
+3.2 Persistenza locale (SQLite)
+Salvataggio progressi
+
+Storico cacce completate
+
+FASE 4: BACKEND (dopo)
+4.1 Connessione API esistenti
+Le tue API Palmipedo
+
+Download cacce
+
+Upload risultati
+
+4.2 Portale web (Blazor)
+Creazione cacce drag&drop
+
+Gestione utenti
+
+Dashboard organizzatori
+
+6. RISORSE DISPONIBILI
+Codice originale: Completo su GitHub (Pino-Soddu/Caccia-al-Tesoro)
+
+Database schema: Compreso e documentato
+
+API esistenti: Tuoi servizi web operativi
+
+Logica collaudata: TreasureHuntCalc già testato (2013)
+
+7. PRIORITÀ IMMEDIATA (OGGI/DOMANI)
+Task 1: Creare CacceViewModel e CaccePage
+ViewModel con ObservableCollection<Caccia>
+
+Page con CollectionView o ListView
+
+Binding base nome/descrizione
+
+Task 2: Hardcode dati demo
+3 cacce esempio in ViewModel
+
+Include caccia Antium (14 punti)
+
+Task 3: Test navigazione
+AppShell con NavigationPage
+
+Tap su caccia → apre dettaglio
+
+8. CONSIDERAZIONI TECNICHE
+Vantaggi attuali:
+✅ Logica core già testata e funzionante
+
+✅ Modelli dati maturi e completi
+
+✅ Architettura separata (Models/Services/ViewModels)
+
+✅ Nessuna dipendenza complessa (no AI, no cloud processing)
+
+Decisioni architetturali:
+MVVM per separazione UI/logica
+
+MAUI Community Toolkit per componenti UI
+
+SQLite per dati locali
+
+API REST per sincronizzazione
+
+9. POSSIBILI SFIDE
+Sensori MAUI:
+Precisione GPS su diversi dispositivi
+
+Calibrazione bussola
+
+Battery consumption ottimizzazione
+
+UI/UX:
+Feedback chiaro durante gameplay
+
+Gestione offline/online
+
+Multi-lingua (già supportato dai models)
+
+10. PIANO TEMPORALE STIMATO
+Settimana 1: UI base + navigazione
+
+Settimana 2: Gameplay + sensori MAUI
+
+Settimana 3: Dati reali + test
+
+Settimana 4: Bug fixing + polish
+
+Mese 2: Integrazione API + portale web
+
+PRONTO PER INIZIARE LO SVILUPPO. Cosa vuoi implementare per primo?
+

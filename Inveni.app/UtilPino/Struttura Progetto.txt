@@ -1,0 +1,66 @@
+﻿Struttura attuale del Progetto
+
+Inveni.App/
+├── Properties/                      
+│   └── launchSettings.json
+
+├── Elementi/					# Oggetti business/temporanei  
+│   ├── CardGeofence.cs
+│   ├── Common.cs
+│   ├── CustomLocation.cs
+│   ├── GeofenceRegion.cs
+│   ├── HorizontalListView.cs
+│   ├── Itinerary.cs				# Stabilisce se si tratta di un Itinerario turistico o di un Itinerario Caccia al tesoro
+│   ├── MenuItem.cs					# trasferire su Modelli?
+│   ├── Notification.cs				# trasferire su Modelli?
+│   ├── NotificationRequest.cs		# trasferire su Modelli?
+│   ├── RisultatoVerifica.cs		# trasferire su Modelli?
+│   ├── OggettoCaccia.cs			
+│   └── User.cs						# trasferire su Modelli?
+
+├── Modelli/						# Dati DB/persistenti                     
+│   ├── AccessoModels.cs			# Gestione accessi da mobile
+│   ├── Caccia.cs					# EstrazioneTracciamento
+│   ├── CancellaGiocoResponse.cs	# Elimina una Caccia al tesoro/Gioco
+│   ├── Categoria.cs				# Categoria Info (probabilmente non serve a meno che non distingua il tipo di gioco)
+│   ├── Commons.cs					# Configurazione linguaggi
+│   ├── Comune.cs					# Info generali di un comune/città (probabilmente non serve)
+│   ├── ImageUpload.cs				# Trasferimento immagine tesoro al server
+│   ├── InviaPosizone.cs			# Invia Posizone GPS
+│   ├── ItemItinerario.cs			# Struttura dettaglio Itinerario turistico/caccia al tesoro (usani la stessa struttura)
+│   ├── Itinerario.cs				# Struttura Itinerario turistico/caccia al tesoro (usani la stessa struttura)
+│   ├── Login.cs					# Autenticazione per partecipare al gioco
+│   ├── Logs.cs						# Log utente
+│   ├── Scheda.cs					# Struttura scheda multimediale (info turistica/caccia al tesoro)
+│   └── Servizio.cs					# Servizio Info (probabilmente non serve, a meno che non distingua il tipo di gioco)
+
+├── Platforms/						# MAUI            
+├── Resource/						# MAUI
+
+├── Servizi/						# Logica business				                  
+│   ├── AccelerometerManager.cs		# Gestione accelerometro per inclinazione telefono
+│   ├── Context.cs					# Probabile gestione Colorazione aree di attenzione/aree di caccia
+│   ├── Extensions.cs				# Probabile gestione scatto della foto al tesoro
+│   ├── GeoUtils.cs					# Probabile gestione Geofence aree di attenzione/aree di caccia
+│   ├── ImagesDictionary.cs			# Boh?
+│   ├── LocationManager.cs			# Gestione della localizzazione GPS
+│   ├── NotificationManager.cs		# Probabile gestione delle "notifiche locali" (avvisi della App sulla evoliuzione del gioco)
+│   ├── PlayerManager.cs			# Gestione player del gioco (musiche, avvisi, descrizione audio dell'enigma del tesoro trovato)
+│   ├── Reachability.cs				# Probabile gestione controllo connessione alla rete internet 
+│   ├── TextToSpeech.cs				# TTS 
+│   ├── ToolbarUtils.cs				# Gestione icone della testatina (?)
+│   └── CalcolatoreTesoro.cs			# Algoritmo di rilevazione esattezza del ritrovamento del tesoro (Utilizza vecchie funzioni e coordinate HWS)
+   
+
+├── Views/							#  Per le pagine MAUI                      
+│   └── GiochiViewModel.cs
+
+├── ViewModels/						#  Per MVVM MAUI  
+│   ├── ToolbarUtils.cs
+│   └── .....
+
+├── App.xaml
+├── AppShell.xaml
+├── appsettings.json
+├── MainPage.xaml
+└── MauiProgram.cs
