@@ -1,8 +1,8 @@
 ﻿using System;
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class CancellaGiocoResponse
     {
-        public string Messaggio { get; set; }
+        public string? Messaggio { get; set; }
     }
 }

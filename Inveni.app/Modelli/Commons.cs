@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class Langs
     {
-        public const string LANG_ITA = "ITA";
-        public const string LANG_ENG = "ENG";
-        public const string LANG_SPA = "SPA";
-        public const string LANG_FRA = "FRA";
-        public const string LANG_DEU = "DEU";
-        public const string LANG_RUS = "RUS";
+        public const string? LANG_ITA = "ITA";
+        public const string? LANG_ENG = "ENG";
+        public const string? LANG_SPA = "SPA";
+        public const string? LANG_FRA = "FRA";
+        public const string? LANG_DEU = "DEU";
+        public const string? LANG_RUS = "RUS";
     }
 }
 

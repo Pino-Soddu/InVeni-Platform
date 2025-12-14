@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class ItemItinerario
     {
@@ -13,7 +13,7 @@ namespace Palmipedo.Models
         public double lat { get; set; }
         public double lon { get; set; }
         public int catId { get; set; }
-        public string name { get; set; }
+        public string? name { get; set; }
         public int serviceId { get; set; }
         public int schedaCode { get; set; }
         public int ndistanza { get; set; }
@@ -27,7 +27,7 @@ namespace Palmipedo.Models
         public double? InclinazioneDa { get; set; }
         public double? InclinazioneA { get; set; }
 
-        public string Photo { get; set; }
-        public string comune { get; set; }
+        public string? Photo { get; set; }
+        public string? comune { get; set; }
     }
 }

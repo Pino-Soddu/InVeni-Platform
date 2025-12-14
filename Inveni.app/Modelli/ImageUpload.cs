@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class ImageUploadSendRequest
     {
@@ -16,6 +16,6 @@ namespace Palmipedo.Models
 
     public class ImageUploadSendResponse
     {
-        public string Messaggio { get; set; }
+        public string? Messaggio { get; set; }
     }
 }

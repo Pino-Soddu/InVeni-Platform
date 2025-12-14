@@ -1,19 +1,19 @@
 ﻿using System;
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class IscrizioneUTRequest
     {
-        public int IdUtente { get; set; }/// Identificativo App dell'Utente 
-        public string UserUt { get; set; }/// User della Login (E-mail)
-        public string PswUt { get; set; } /// Password della Login
+        public int IdUtente { get; set; }   // Identificativo App dell'Utente 
+        public string? UserUt { get; set; } // User della Login (E-mail)
+        public string? PswUt { get; set; }  // Password della Login
     }
 
     public class IscrizioneUTResponse
     {
-        public int EsitoLogin { get; set; }    /// Codice Esito Login
-        public string DescrEsito { get; set; }/// Descrizione Esito Login 
-        public string UserUt { get; set; }/// User della Login (E-mail) 
-        public string PswUt { get; set; }/// Password della Login
+        public int EsitoLogin { get; set; }     // Codice Esito Login
+        public string? DescrEsito { get; set; } // Descrizione Esito Login 
+        public string? UserUt { get; set; }     // User della Login (E-mail) 
+        public string? PswUt { get; set; }      // Password della Login
 
         //EsitoLogin, DescrEsito
         // 0 = OK (Email inviata, Attesa verifica)
@@ -27,14 +27,14 @@ namespace Palmipedo.Models
     public class LoginUTRequest
     {
         public int IdUtente { get; set; }
-        public string UserUt { get; set; }
-        public string PswUt { get; set; }
+        public string? UserUt { get; set; }
+        public string? PswUt { get; set; }
     }
 
     public class LoginUTResponse
     {
         public int EsitoLogin { get; set; }
-        public string DescrEsito { get; set; }
+        public string? DescrEsito { get; set; }
 
         //EsitoLogin, DescrEsito
         // 0 = OK
@@ -54,9 +54,9 @@ namespace Palmipedo.Models
     public class CheckLoginResponse
     {
         public int EsitoLogin { get; set; }
-        public string DescrEsito { get; set; }
-        public string UserUt { get; set; }
-        public string PswUt { get; set; }
+        public string? DescrEsito { get; set; }
+        public string? UserUt { get; set; }
+        public string? PswUt { get; set; }
 
         //EsitoLogin, DescrEsito
         // 0 = Login Attiva
@@ -74,7 +74,7 @@ namespace Palmipedo.Models
     public class CancellaIscrizioneResponse
     {
         public int EsitoLogin { get; set; }
-        public string DescrEsito { get; set; }
+        public string? DescrEsito { get; set; }
         //EsitoLogin, DescrEsito
         // 0 = OK
         // 4 = Errore generico
@@ -88,9 +88,9 @@ namespace Palmipedo.Models
     public class RicordaEmailResponse
     {
         public int Esito { get; set; }
-        public string DescrEsito { get; set; }
-        public string UserUt { get; set; }
-        public string PswUt { get; set; }
+        public string? DescrEsito { get; set; }
+        public string? UserUt { get; set; }
+        public string? PswUt { get; set; }
         //EsitoLogin, DescrEsito
         // 0 = OK (Email inviata)
         // 4 = Errore generico
@@ -105,7 +105,7 @@ namespace Palmipedo.Models
     public class LogoutResponse
     {
         public int Esito { get; set; }
-        public string DescrEsito { get; set; }
+        public string? DescrEsito { get; set; }
         //EsitoLogin, DescrEsito
         // 0 = OK (Email inviata)
         // 4 = Errore generico

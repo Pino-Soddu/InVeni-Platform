@@ -3,66 +3,73 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Palmipedo.Models
+namespace Inveni.App.Modelli
 {
     public class Scheda
     {
         public int _id { get; set; }
-        public string AdvId { get; set; }
-        public string BannerMappa { get; set; }
+        public string? AdvId { get; set; }
+        public string? BannerMappa { get; set; }
         public DateTime? EventEndDate { get; set; }
         public DateTime? EventStartDate { get; set; }
-        public string ImgAvvio { get; set; }
-        public string ImgHomePage { get; set; }
+        public string? ImgAvvio { get; set; }
+        public string? ImgHomePage { get; set; }
         public int LocandinaId { get; set; }
-        public string pathText { get; set; }
-        public string ShortName { get; set; }
+        public string? pathText { get; set; }
+        public string? ShortName { get; set; }
         public int SponsorId { get; set; }
-        //public string LogoHomePage { get; set; }
+        //public string? LogoHomePage { get; set; }
         //public int PosterId { get; set; }
-        public string Telephone { get; set; }
-        public string WelcomeAudio { get; set; }
-        public string address { get; set; }
-        public string audio { get; set; }
+        public string? Telephone { get; set; }
+        public string? WelcomeAudio { get; set; }
+        public string? address { get; set; }
+        public string? audio { get; set; }
         public int catId { get; set; }
-        public string comune { get; set; }
-        public string dataExists { get; set; }
-        public string date { get; set; }
+        public string? comune { get; set; }
+        public string? dataExists { get; set; }
+        public string? date { get; set; }
         public double lat { get; set; }
         public double lon { get; set; }
-        public string lengthAudio { get; set; }
+        public string? lengthAudio { get; set; }
         public int nClicks { get; set; }
         public int nListens { get; set; }
         public int nVisits { get; set; }
-        public string name { get; set; }
-        public string photo1 { get; set; }
-        public string photo2 { get; set; }
-        public string photo3 { get; set; }
+        public string? name { get; set; }
+        public string? photo1 { get; set; }
+        public string? photo2 { get; set; }
+        public string? photo3 { get; set; }
         public int priority { get; set; }
         public int radius { get; set; }
         public int schedaCode { get; set; }
         public int serviceId { get; set; }
-        public string text { get; set; }
+        public string? text { get; set; }
         public int userId { get; set; }
-        public string video { get; set; }
+        public string? video { get; set; }
         public bool visible { get; set; }
-        public string youtubeUrl { get; set; }
-        public string TestoEnigma { get; set; }
-        public string LunghezzaCaccia { get; set; }
-        public string NumTappeCaccia { get; set; }
+        public string? youtubeUrl { get; set; }
+        public string? TestoEnigma { get; set; }
+        public string? LunghezzaCaccia { get; set; }
+        public string? NumTappeCaccia { get; set; }
         public bool IsVisibleByFilter { get; set; }
         public DateTime? LastListeningDate { get; set; }
-        public string AreaEnigmaMp3 { get; set; }
+        public string? AreaEnigmaMp3 { get; set; }
 
         [JsonIgnore]
         public List<string> Photos
         {
             get
             {
-                List<string> list = new List<string>();
-                list.Add(photo1);
-                list.Add(photo2);
-                list.Add(photo3);
+                var list = new List<string>();
+
+                if (!string.IsNullOrEmpty(photo1))
+                    list.Add(photo1);
+
+                if (!string.IsNullOrEmpty(photo2))
+                    list.Add(photo2);
+
+                if (!string.IsNullOrEmpty(photo3))
+                    list.Add(photo3);
+
                 return list;
             }
         }
@@ -122,7 +129,7 @@ namespace Palmipedo.Models
         }
 
         [JsonIgnore]
-        public ItemItinerario ItemItinerario { get; set; }
+        public ItemItinerario? ItemItinerario { get; set; }
     }
 
     public enum EnigmaType
