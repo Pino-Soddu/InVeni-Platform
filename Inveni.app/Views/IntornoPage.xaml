@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inveni.App.Views.IntornoPage"
+             Title="VICINO A ME">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- HEADER con titolo e pulsante refresh -->
+        <Border Grid.Row="0"
+                StrokeThickness="0"
+                BackgroundColor="#1A237E"
+                Padding="15,10">
+            <Grid ColumnDefinitions="*, Auto">
+
+                <!-- Titolo -->
+                <Label Grid.Column="0"
+                       Text="VICINO A TE"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
+
+                <!-- Pulsante Refresh -->
+                <Button Grid.Column="1"
+                        Text="&#xE5D5;"
+                        FontFamily="MaterialIcons"
+                        FontSize="22"
+                        TextColor="White"
+                        BackgroundColor="Transparent"
+                        Command="{Binding CaricaCacceCommand}"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+
+            </Grid>
+        </Border>
+
+        <!-- CONTENUTO PRINCIPALE: lista cacce -->
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsLoading}"
+                     Command="{Binding CaricaCacceCommand}">
+
+            <CollectionView ItemsSource="{Binding Cacce}"
+                            SelectionMode="None">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center"
+                                         HorizontalOptions="Center"
+                                         Padding="40"
+                                         Spacing="20">
+
+                        <Label Text="&#xE55C;"
+                               FontFamily="MaterialIcons"
+                               FontSize="64"
+                               TextColor="#E0E0E0"
+                               HorizontalOptions="Center"/>
+
+                        <Label Text="Nessuna caccia attiva vicino a te"
+                               FontSize="16"
+                               TextColor="#9E9E9E"
+                               HorizontalOptions="Center"/>
+
+                        <Button Text="AGGIORNA"
+                                Command="{Binding CaricaCacceCommand}"
+                                BackgroundColor="#1A237E"
+                                TextColor="White"
+                                Padding="30,12"
+                                FontAttributes="Bold"/>
+
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <!-- CARD singola caccia -->
+                        <Border Margin="15,8"
+                                Padding="0"
+                                StrokeThickness="0"
+                                BackgroundColor="White">
+
+                            <Border.Shadow>
+                                <Shadow Brush="#40000000"
+                                        Offset="0,2"
+                                        Opacity="0.1"
+                                        Radius="4"/>
+                            </Border.Shadow>
+
+                            <Grid RowDefinitions="Auto, *, Auto"
+                                  ColumnDefinitions="*, Auto">
+
+                                <!-- RIGA 1: Banda stato + distanza -->
+                                <Border Grid.Row="0" Grid.ColumnSpan="2"
+                                        BackgroundColor="{Binding ColoreStato}"
+                                        HeightRequest="6"/>
+
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding DistanzaFormattata}"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       Margin="10,0"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="End"
+                                       IsVisible="{Binding MostraDistanza}"/>
+
+                                <!-- RIGA 2: Contenuto principale -->
+                                <Grid Grid.Row="1" Grid.ColumnSpan="2"
+                                      Padding="15,10"
+                                      ColumnDefinitions="Auto, *, Auto">
+
+                                    <!-- Icona stato -->
+                                    <Label Grid.Column="0"
+                                           Text="{Binding IconaStato}"
+                                           FontSize="24"
+                                           VerticalOptions="Center"
+                                           Margin="0,0,10,0"/>
+
+                                    <!-- Info caccia -->
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         Spacing="4">
+
+                                        <Label Text="{Binding Name}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="#1A237E"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"/>
+
+                                        <Label Text="{Binding Organizzatore}"
+                                               FontSize="13"
+                                               TextColor="#666666"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"/>
+
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label Text="{Binding Comune}"
+                                                   FontSize="12"
+                                                   TextColor="#2196F3"
+                                                   FontAttributes="Bold"/>
+
+                                            <Label Text="{Binding LocalitaCaccia}"
+                                                   FontSize="12"
+                                                   TextColor="#757575"/>
+                                        </HorizontalStackLayout>
+
+                                    </VerticalStackLayout>
+
+                                    <!-- Badge TOP se in evidenza -->
+                                    <Border Grid.Column="2"
+                                            IsVisible="{Binding TopCaccia}"
+                                            StrokeThickness="0"
+                                            BackgroundColor="#FFC107"
+                                            Padding="6,2"
+                                            VerticalOptions="Start"
+                                            HorizontalOptions="End">
+                                        <Label Text="TOP"
+                                               FontSize="10"
+                                               FontAttributes="Bold"
+                                               TextColor="#1A237E"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <!-- RIGA 3: Footer con dettagli -->
+                                <Border Grid.Row="2" Grid.ColumnSpan="2"
+                                        BackgroundColor="#F5F5F5"
+                                        Padding="15,8">
+                                    <HorizontalStackLayout Spacing="15"
+                                                           HorizontalOptions="Center">
+
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="&#xE1FB;"
+                                                   FontFamily="MaterialIcons"
+                                                   FontSize="14"
+                                                   TextColor="#666666"/>
+                                            <Label Text="{Binding NumTappeCaccia, StringFormat='{0} tappe'}"
+                                                   FontSize="12"
+                                                   TextColor="#666666"/>
+                                        </HorizontalStackLayout>
+
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="&#xE1C4;"
+                                                   FontFamily="MaterialIcons"
+                                                   FontSize="14"
+                                                   TextColor="#666666"/>
+                                            <Label Text="{Binding LunghezzaCaccia}"
+                                                   FontSize="12"
+                                                   TextColor="#666666"/>
+                                        </HorizontalStackLayout>
+
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                            </Grid>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </RefreshView>
+
+        <!-- INDICATORE CARICAMENTO -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           Color="#1A237E"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           WidthRequest="50"
+                           HeightRequest="50"/>
+
+    </Grid>
+
+</ContentPage>

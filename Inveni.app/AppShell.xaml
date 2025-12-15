@@ -3,13 +3,59 @@
     x:Class="Inveni.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:Inveni.App"
-    Shell.FlyoutBehavior="Disabled"
-    Title="Inveni.App">
+    xmlns:views="clr-namespace:Inveni.App.Views"
+    xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
+    Title="Inveni"
+    FlyoutBehavior="Disabled"
+    Shell.TabBarIsVisible="True">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!--
+        STRUTTURA NAVIGAZIONE PRINCIPALE:
+        TabBar in basso con 3 schede:
+        1. GIOCA ORA (default)
+        2. IN PROGRAMMA
+        3. STORICO
+    -->
+
+    <!-- TabBar (menu principale in basso) -->
+    <TabBar>
+
+        <!-- TAB 1: GIOCA ORA (default) -->
+        <Tab
+            Title="GIOCA ORA"
+            Icon="play_circle_outline.png">
+
+            <ShellContent
+                Title="GIOCA ORA"
+                ContentTemplate="{DataTemplate views:GiocaOraPage}"
+                Route="GiocaOraPage" />
+
+        </Tab>
+
+        <!-- TAB 2: IN PROGRAMMA -->
+        <Tab
+            Title="IN PROGRAMMA"
+            Icon="event_available.png">
+
+            <ShellContent
+                Title="IN PROGRAMMA"
+                ContentTemplate="{DataTemplate views:InProgrammaPage}"
+                Route="InProgrammaPage" />
+
+        </Tab>
+
+        <!-- TAB 3: STORICO -->
+        <Tab
+            Title="STORICO"
+            Icon="history.png">
+
+            <ShellContent
+                Title="STORICO"
+                ContentTemplate="{DataTemplate views:StoricoPage}"
+                Route="StoricoPage" />
+
+        </Tab>
+
+    </TabBar>
 
 </Shell>

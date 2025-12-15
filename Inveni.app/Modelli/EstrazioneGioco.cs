@@ -40,6 +40,8 @@ namespace Inveni.App.Modelli
         public string? photo1 { get; set; }     // Da Multimedia.Foto
 
         public string? comune { get; set; }     // Da Schede.Comune
+        public string? organizzatore { get; set; }  // Da Schede.Organizzatore
+        public bool? topCaccia { get; set; }  // Da Schede.TOP:SK
         public string? localitaCaccia { get; set; }  // Da Schede.Dati04
         public string? lunghezzaCaccia { get; set; } // Da Schede.Dati05
         public string? numTappeCaccia { get; set; }  // Da Schede.Dati06

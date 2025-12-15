@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:Inveni.App.Views"
+             x:Class="Inveni.App.Views.GiocaOraPage"
+             Title="GIOCA ORA">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- MENU SCHEDE SECONDARIE ORIZZONTALE -->
+        <ScrollView Grid.Row="0" 
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never">
+
+            <HorizontalStackLayout Spacing="0" 
+                                   HeightRequest="60"
+                                   BackgroundColor="#F5F5F5">
+
+                <!-- SCHEDA 1: VICINO A ME (selezionata default) -->
+                <Border StrokeThickness="0"
+                        Padding="20,15"
+                        BackgroundColor="#1A237E"
+                        HeightRequest="60">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <!-- Icona Material Icons: my_location FILLED -->
+                        <Label Text="&#xE55C;"
+                               FontFamily="MaterialIcons"
+                               FontSize="20"
+                               TextColor="White"
+                               HorizontalOptions="Center"/>
+                        <Label Text="VICINO A ME"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- SCHEDA 2: PER COMUNE -->
+                <Border StrokeThickness="0"
+                        Padding="20,15"
+                        BackgroundColor="Transparent"
+                        HeightRequest="60">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <!-- Icona Material Icons: map OUTLINED -->
+                        <Label Text="&#xE55B;"
+                               FontFamily="MaterialIcons"
+                               FontSize="20"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                        <Label Text="PER COMUNE"
+                               FontSize="11"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- SCHEDA 3: ORGANIZZATORI -->
+                <Border StrokeThickness="0"
+                        Padding="20,15"
+                        BackgroundColor="Transparent"
+                        HeightRequest="60">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <!-- Icona Material Icons: groups OUTLINED -->
+                        <Label Text="&#xEA21;"
+                               FontFamily="MaterialIcons"
+                               FontSize="20"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                        <Label Text="ORGANIZZATORI"
+                               FontSize="11"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- SCHEDA 4: IN EVIDENZA -->
+                <Border StrokeThickness="0"
+                        Padding="20,15"
+                        BackgroundColor="Transparent"
+                        HeightRequest="60">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <!-- Icona Material Icons: star OUTLINED -->
+                        <Label Text="&#xE838;"
+                               FontFamily="MaterialIcons"
+                               FontSize="20"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                        <Label Text="IN EVIDENZA"
+                               FontSize="11"
+                               TextColor="#666666"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- CONTENUTO PRINCIPALE: IntornoPage -->
+        <views:IntornoPage Grid.Row="1"/>
+
+    </Grid>
+
+</ContentPage>
