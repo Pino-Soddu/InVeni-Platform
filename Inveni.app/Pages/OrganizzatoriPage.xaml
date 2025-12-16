@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
+             xmlns:modelli="clr-namespace:Inveni.App.Modelli"
+             xmlns:converters="clr-namespace:Inveni.App.ViewModels"
+             x:Class="Inveni.App.Pages.OrganizzatoriPage"
+             x:DataType="viewmodels:OrganizzatoriViewModel"
+             Title="ORGANIZZATORI"
+             NavigationPage.HasNavigationBar="False">
+
+    <!-- RISORSE DELLA PAGINA -->
+    <ContentPage.Resources>
+        <!-- Converter per mostrare elementi solo se valore > 0 -->
+        <converters:MaggioreDiZeroConverter x:Key="MaggioreDiZero" />
+    </ContentPage.Resources>
+
+    <!-- REFRESH VIEW PER PULL-TO-REFRESH -->
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding CaricaOrganizzatoriCommand}"
+                 RefreshColor="#2196F3">
+
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+
+                <!-- =========================================== -->
+                <!-- HEADER: TITOLO "ORGANIZZATORI" -->
+                <!-- =========================================== -->
+                <Border BackgroundColor="#2196F3"
+                        Stroke="Transparent"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 0"
+                        HeightRequest="80"
+                        Margin="-10,0,-10,10">
+                    <Label Text="ORGANIZZATORI"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- =========================================== -->
+                <!-- BARRA DI RICERCA ORGANIZZATORI -->
+                <!-- =========================================== -->
+                <Border BackgroundColor="White"
+                        Stroke="Transparent"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 10"
+                        Margin="15,0,15,15"
+                        Padding="15">
+
+                    <HorizontalStackLayout Spacing="10">
+
+                        <!-- ICONA LUPA PER RICERCA -->
+                        <Label Text="🔍"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+
+                        <!-- CAMPO DI TESTO PER RICERCA ORGANIZZATORI -->
+                        <Entry Placeholder="Cerca organizzatore..."
+                               PlaceholderColor="#999999"
+                               ClearButtonVisibility="WhileEditing"
+                               FontSize="16"
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Center"
+                               Text="{Binding TestoRicerca, Mode=TwoWay}" />
+
+                    </HorizontalStackLayout>
+
+                </Border>
+
+                <!-- =========================================== -->
+                <!-- STATO: CARICAMENTO IN CORSO -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsCaricamento}"
+                                     Spacing="10"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="0,40">
+
+                    <!-- INDICATORE DI CARICAMENTO ROTANTE -->
+                    <ActivityIndicator IsRunning="True"
+                                       Color="#2196F3"
+                                       HorizontalOptions="Center" />
+
+                    <!-- MESSAGGIO DI CARICAMENTO -->
+                    <Label Text="Caricamento organizzatori..."
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO: NESSUN ORGANIZZATORE TROVATO -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsVuoto}"
+                                     Spacing="20"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="20">
+
+                    <!-- ICONA ORGANIZZATORE VUOTO -->
+                    <Label Text="👤"
+                           FontSize="40"
+                           HorizontalOptions="Center"
+                           TextColor="#CCCCCC" />
+
+                    <!-- MESSAGGIO DI NESSUN RISULTATO -->
+                    <Label Text="Nessun organizzatore trovato"
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- PULSANTE PER RESETTARE LA RICERCA -->
+                    <Button Text="Mostra tutti"
+                            BackgroundColor="Transparent"
+                            TextColor="#2196F3"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Command="{Binding MostraTuttiCommand}" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO: ERRORE DI CARICAMENTO -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsErrore}"
+                                     Spacing="20"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="20">
+
+                    <!-- ICONA DI ERRORE -->
+                    <Label Text="⚠️"
+                           FontSize="40"
+                           HorizontalOptions="Center"
+                           TextColor="#FF9800" />
+
+                    <!-- MESSAGGIO DI ERRORE DINAMICO -->
+                    <Label Text="{Binding MessaggioErrore}"
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- PULSANTE PER RIPROVARE -->
+                    <Button Text="Riprova"
+                            BackgroundColor="Transparent"
+                            TextColor="#2196F3"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Command="{Binding RiprovaCommand}" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO SUCCESSO: LISTA ORGANIZZATORI -->
+                <!-- =========================================== -->
+                <CollectionView ItemsSource="{Binding OrganizzatoriRaggruppati}"
+                                SelectionMode="None"
+                                IsVisible="{Binding IsSuccesso}">
+
+                    <!-- TEMPLATE PER OGNI ORGANIZZATORE -->
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="modelli:OrganizzatoreRaggruppato">
+
+                            <!-- CARD SINGOLA ORGANIZZATORE -->
+                            <Border Stroke="Transparent"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Margin="15,0,15,10"
+                                    Padding="20"
+                                    BackgroundColor="White">
+
+                                <VerticalStackLayout Spacing="8">
+
+                                    <!-- RIGA SUPERIORE: NOME ORGANIZZATORE E TOTALE -->
+                                    <HorizontalStackLayout>
+
+                                        <!-- NOME DELL'ORGANIZZATORE -->
+                                        <Label Text="{Binding NomeOrganizzatore}"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               TextColor="#1A237E"
+                                               HorizontalOptions="Start"
+                                               VerticalTextAlignment="Center" />
+
+                                        <!-- CONTATORE TOTALE CACCE -->
+                                        <Label Text="{Binding TotaleCacce, StringFormat='({0})'}"
+                                               FontSize="16"
+                                               TextColor="#2196F3"
+                                               FontAttributes="Bold"
+                                               VerticalTextAlignment="Center" />
+
+                                    </HorizontalStackLayout>
+
+                                    <!-- RIGA INFERIORE: CONTATORI PER STATO -->
+                                    <VerticalStackLayout Spacing="4">
+
+                                        <!-- CACCE ATTIVE (SOLO SE > 0) -->
+                                        <HorizontalStackLayout 
+                                            IsVisible="{Binding CacceAttive, Converter={StaticResource MaggioreDiZero}}"
+                                            Spacing="6">
+
+                                            <Label Text="🟢"
+                                                   FontSize="14"
+                                                   VerticalTextAlignment="Center" />
+
+                                            <Label Text="{Binding CacceAttive, StringFormat='{0} attive'}"
+                                                   FontSize="14"
+                                                   TextColor="#4CAF50"
+                                                   VerticalTextAlignment="Center" />
+
+                                        </HorizontalStackLayout>
+
+                                        <!-- CACCE PROGRAMMATE (SOLO SE > 0) -->
+                                        <HorizontalStackLayout 
+                                            IsVisible="{Binding CacceProgrammate, Converter={StaticResource MaggioreDiZero}}"
+                                            Spacing="6">
+
+                                            <Label Text="🟠"
+                                                   FontSize="14"
+                                                   VerticalTextAlignment="Center" />
+
+                                            <Label Text="{Binding CacceProgrammate, StringFormat='{0} programmate'}"
+                                                   FontSize="14"
+                                                   TextColor="#FF9800"
+                                                   VerticalTextAlignment="Center" />
+
+                                        </HorizontalStackLayout>
+
+                                        <!-- CACCE SCADUTE/DISPONIBILI (SOLO SE > 0) -->
+                                        <HorizontalStackLayout 
+                                            IsVisible="{Binding CacceScaduteDisponibili, Converter={StaticResource MaggioreDiZero}}"
+                                            Spacing="6">
+
+                                            <Label Text="⚪"
+                                                   FontSize="14"
+                                                   VerticalTextAlignment="Center" />
+
+                                            <Label Text="{Binding CacceScaduteDisponibili, StringFormat='{0} scadute/disponibili'}"
+                                                   FontSize="14"
+                                                   TextColor="#666666"
+                                                   VerticalTextAlignment="Center" />
+
+                                        </HorizontalStackLayout>
+
+                                    </VerticalStackLayout>
+
+                                    <!-- PULSANTE PER VEDERE CACCE DETTAGLIO -->
+                                    <Button Text="Vedi cacce →"
+                                            BackgroundColor="Transparent"
+                                            TextColor="#2196F3"
+                                            FontAttributes="Bold"
+                                            HorizontalOptions="End"
+                                            Padding="0,5"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:OrganizzatoriViewModel}}, Path=VediCacceCommand}"
+                                            CommandParameter="{Binding}" />
+
+                                </VerticalStackLayout>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

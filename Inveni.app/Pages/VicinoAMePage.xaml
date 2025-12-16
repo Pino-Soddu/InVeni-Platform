@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
+             xmlns:modelli="clr-namespace:Inveni.App.Modelli"
+             x:Class="Inveni.App.Pages.VicinoAMePage"
+             NavigationPage.HasNavigationBar="False">
+
+    <!-- RISORSE DELLA PAGINA -->
+    <ContentPage.Resources>
+        <!-- CONVERTER PER VISIBILITÀ -->
+        <viewmodels:InverseBooleanConverter x:Key="InverseBool" />
+        <viewmodels:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <viewmodels:LunghezzaFormatterConverter x:Key="LunghezzaFormatter" />
+
+        <!-- STILE PER IL BADGE TOP -->
+        <Style TargetType="Frame" x:Key="TopBadgeStyle">
+            <Setter Property="BackgroundColor" Value="#FFD700" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="HasShadow" Value="False" />
+            <Setter Property="BorderColor" Value="Transparent" />
+        </Style>
+    </ContentPage.Resources>
+
+    <!-- LAYOUT PRINCIPALE -->
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}"
+                 RefreshColor="#2196F3">
+
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Padding="10">
+
+                <!-- HEADER: VICINO A ME -->
+                <Border  BackgroundColor="#2196F3"
+                       HeightRequest="80"
+                       StrokeShape="RoundRectangle 0"
+                       Margin="-10,0,-10,10">
+                    <Label Text="VICINO A ME"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- SEZIONE 1: GIOCA ORA -->
+                <VerticalStackLayout Spacing="8">
+                    <!-- TITOLO CON CONTATORE -->
+                    <HorizontalStackLayout Spacing="5" Margin="10,0,0,0">
+                        <Label Text="GIOCA ORA"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3" />
+                        <Label Text="{Binding CacceAttive.Count, StringFormat=' · {0} cacce'}"
+                               FontSize="16"
+                               TextColor="#666666"
+                               VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+
+                    <!-- LISTA CACCE ATTIVE -->
+                    <CollectionView ItemsSource="{Binding CacceAttive}"
+                                    HorizontalScrollBarVisibility="Never"
+                                    HeightRequest="160">
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="modelli:Gioco">
+
+                                <!-- CARD SINGOLA -->
+                                <Border  WidthRequest="280"
+                                       HeightRequest="140"
+                                       StrokeShape="RoundRectangle 12"
+                                       Padding="15"
+                                       BackgroundColor="White"
+                                       Stroke="{Binding ColoreBordoStato}"
+                                       Margin="0,0,0,5">
+
+                                    <Grid ColumnDefinitions="60, *"
+                                          ColumnSpacing="10"
+                                          RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+
+                                        <!-- COLONNA 1: FOTO -->
+                                        <Grid Grid.Column="0" 
+                                              Grid.Row="0" 
+                                              Grid.RowSpan="3"
+                                              VerticalOptions="Start">
+
+                                            <!-- IMMAGINE PRINCIPALE -->
+                                            <Image Source="{Binding FotoSource}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   Aspect="AspectFill">
+                                                <Image.Clip>
+                                                    <RoundRectangleGeometry CornerRadius="10" />
+                                                </Image.Clip>
+                                            </Image>
+
+                                            <!-- FALLBACK SE NON C'È FOTO -->
+                                            <Border  IsVisible="{Binding PercorsoFotoCompleto, Converter={StaticResource InverseBool}}"
+                                                   BackgroundColor="{Binding ColoreFallbackComune}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   StrokeShape="RoundRectangle 10"
+                                                   Padding="0">
+                                                <Label Text="{Binding InizialeComune}"
+                                                       FontSize="24"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- COLONNA 2: CONTENUTO TESTO -->
+                                        <Grid Grid.Column="1"
+                                              Grid.Row="0"
+                                              ColumnDefinitions="*, Auto">
+
+                                            <!-- NOME CACCIA -->
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding name}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#1A237E"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1"
+                                                   VerticalOptions="Start" />
+
+                                            <!-- BADGE TOP (se presente) -->
+                                            <Border  Grid.Column="1"
+                                                   Style="{StaticResource TopBadgeStyle}"
+                                                   IsVisible="{Binding IsTopCaccia}">
+                                                <Label Text="TOP"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- ORGANIZZATORE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="1"
+                                               Text="{Binding organizzatore}"
+                                               FontSize="13"
+                                               TextColor="#666666"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- COMUNE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="2"
+                                               Text="{Binding comune}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#2196F3"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- LOCALITÀ -->
+                                        <Label Grid.Column="0"
+                                               Grid.ColumnSpan="2"
+                                               Grid.Row="3"
+                                               Text="{Binding localitaCaccia}"
+                                               FontSize="12"
+                                               TextColor="#757575"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,8,0,0" />
+
+                                        <!-- RIGA INFERIORE: TAPPE, LUNGHEZZA, DATE -->
+                                        <HorizontalStackLayout Grid.Column="0"
+                                                               Grid.ColumnSpan="2"
+                                                               Grid.Row="4"
+                                                               Spacing="15"
+                                                               Margin="0,8,0,0">
+
+                                            <!-- TAPPE -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="🚩"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding numTappeCaccia}"
+                                                       FontSize="12"
+                                                       TextColor="#4CAF50"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- LUNGHEZZA -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="📏"
+                                                       FontSize="12" />
+                                                                                            <Label Text="{Binding lunghezzaCaccia, Converter={StaticResource LunghezzaFormatter}}"
+                                                       FontSize="12"
+                                                       TextColor="#FF9800"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- DATE (solo se presenti) -->
+                                            <HorizontalStackLayout Spacing="4" 
+                                                                   IsVisible="{Binding dataInizio, Converter={StaticResource NullToBoolConverter}}">
+                                                <Label Text="🗓️"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding dataInizio, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="-"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="{Binding dataFine, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                            </HorizontalStackLayout>
+                                        </HorizontalStackLayout>
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <!-- MESSAGGIO SE NON CI SONO CACCE -->
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center"
+                                                 VerticalOptions="Center"
+                                                 HeightRequest="140">
+                                <Label Text="Nessuna caccia disponibile"
+                                       FontSize="14"
+                                       TextColor="#666666"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- SEZIONE 2: IN PROGRAMMA -->
+                <VerticalStackLayout Spacing="8">
+                    <!-- TITOLO CON CONTATORE -->
+                    <HorizontalStackLayout Spacing="5" Margin="10,0,0,0">
+                        <Label Text="IN PROGRAMMA"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3" />
+                        <Label Text="{Binding CacceProgrammate.Count, StringFormat=' · {0} cacce'}"
+                               FontSize="16"
+                               TextColor="#666666"
+                               VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+
+                    <!-- LISTA CACCE PROGRAMMATE -->
+                    <CollectionView ItemsSource="{Binding CacceProgrammate}"
+                                    HorizontalScrollBarVisibility="Never"
+                                    HeightRequest="160">
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="modelli:Gioco">
+
+                                <!-- CARD SINGOLA -->
+                                <Border  WidthRequest="280"
+                                       HeightRequest="140"
+                                       StrokeShape="RoundRectangle 12"
+                                       Padding="15"
+                                       BackgroundColor="White"
+                                       Stroke ="{Binding ColoreBordoStato}"
+                                       Margin="0,0,0,5">
+
+                                    <Grid ColumnDefinitions="60, *"
+                                          ColumnSpacing="10"
+                                          RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+
+                                        <!-- COLONNA 1: FOTO -->
+                                        <Grid Grid.Column="0" 
+                                              Grid.Row="0" 
+                                              Grid.RowSpan="3"
+                                              VerticalOptions="Start">
+
+                                            <!-- IMMAGINE PRINCIPALE -->
+                                            <Image Source="{Binding FotoSource}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   Aspect="AspectFill">
+                                                <Image.Clip>
+                                                    <RoundRectangleGeometry CornerRadius="10" />
+                                                </Image.Clip>
+                                            </Image>
+
+                                            <!-- FALLBACK SE NON C'È FOTO -->
+                                           <Border IsVisible="{Binding PercorsoFotoCompleto, Converter={StaticResource InverseBool}}"
+                                                   BackgroundColor="{Binding ColoreFallbackComune}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   StrokeShape="RoundRectangle 10"
+                                                   Padding="0">
+                                                <Label Text="{Binding InizialeComune}"
+                                                       FontSize="24"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- COLONNA 2: CONTENUTO TESTO -->
+                                        <Grid Grid.Column="1"
+                                              Grid.Row="0"
+                                              ColumnDefinitions="*, Auto">
+
+                                            <!-- NOME CACCIA -->
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding name}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#1A237E"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1"
+                                                   VerticalOptions="Start" />
+
+                                            <!-- BADGE TOP (se presente) -->
+                                           <Border Grid.Column="1"
+                                                   Style="{StaticResource TopBadgeStyle}"
+                                                   IsVisible="{Binding IsTopCaccia}">
+                                                <Label Text="TOP"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- ORGANIZZATORE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="1"
+                                               Text="{Binding organizzatore}"
+                                               FontSize="13"
+                                               TextColor="#666666"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- COMUNE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="2"
+                                               Text="{Binding comune}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#2196F3"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- LOCALITÀ -->
+                                        <Label Grid.Column="0"
+                                               Grid.ColumnSpan="2"
+                                               Grid.Row="3"
+                                               Text="{Binding localitaCaccia}"
+                                               FontSize="12"
+                                               TextColor="#757575"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,8,0,0" />
+
+                                        <!-- RIGA INFERIORE: TAPPE, LUNGHEZZA, DATE -->
+                                        <HorizontalStackLayout Grid.Column="0"
+                                                               Grid.ColumnSpan="2"
+                                                               Grid.Row="4"
+                                                               Spacing="15"
+                                                               Margin="0,8,0,0">
+
+                                            <!-- TAPPE -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="🚩"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding numTappeCaccia}"
+                                                       FontSize="12"
+                                                       TextColor="#4CAF50"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- LUNGHEZZA -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="📏"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding lunghezzaCaccia, Converter={StaticResource LunghezzaFormatter}}"
+                                                       FontSize="12"
+                                                       TextColor="#FF9800"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- DATE (solo se presenti) -->
+                                            <HorizontalStackLayout Spacing="4" 
+                                                                   IsVisible="{Binding dataInizio, Converter={StaticResource NullToBoolConverter}}">
+                                                <Label Text="🗓️"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding dataInizio, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="-"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="{Binding dataFine, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                            </HorizontalStackLayout>
+                                        </HorizontalStackLayout>
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <!-- MESSAGGIO SE NON CI SONO CACCE -->
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center"
+                                                 VerticalOptions="Center"
+                                                 HeightRequest="140">
+                                <Label Text="Nessuna caccia in programma"
+                                       FontSize="14"
+                                       TextColor="#666666"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- SEZIONE 3: SCADUTE/DISPONIBILI -->
+                <VerticalStackLayout Spacing="8">
+                    <!-- TITOLO CON CONTATORE -->
+                    <HorizontalStackLayout Spacing="5" Margin="10,0,0,0">
+                        <Label Text="SCADUTE/DISPONIBILI"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3" />
+                        <Label Text="{Binding CacceStoriche.Count, StringFormat=' · {0} cacce'}"
+                               FontSize="16"
+                               TextColor="#666666"
+                               VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+
+                    <!-- LISTA CACCE STORICHE -->
+                    <CollectionView ItemsSource="{Binding CacceStoriche}"
+                                    HorizontalScrollBarVisibility="Never"
+                                    HeightRequest="160">
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="modelli:Gioco">
+
+                                <!-- CARD SINGOLA -->
+                               <Border WidthRequest="280"
+                                       HeightRequest="140"
+                                       StrokeShape="RoundRectangle 12"
+                                       Padding="15"
+                                       BackgroundColor="White"
+                                       Stroke="{Binding ColoreBordoStato}"
+                                       Margin="0,0,0,5">
+
+                                    <Grid ColumnDefinitions="60, *"
+                                          ColumnSpacing="10"
+                                          RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+
+                                        <!-- COLONNA 1: FOTO -->
+                                        <Grid Grid.Column="0" 
+                                              Grid.Row="0" 
+                                              Grid.RowSpan="3"
+                                              VerticalOptions="Start">
+
+                                            <!-- IMMAGINE PRINCIPALE -->
+                                            <Image Source="{Binding FotoSource}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   Aspect="AspectFill">
+                                                <Image.Clip>
+                                                    <RoundRectangleGeometry CornerRadius="10" />
+                                                </Image.Clip>
+                                            </Image>
+
+                                            <!-- FALLBACK SE NON C'È FOTO -->
+                                           <Border IsVisible="{Binding PercorsoFotoCompleto, Converter={StaticResource InverseBool}}"
+                                                   BackgroundColor="{Binding ColoreFallbackComune}"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"
+                                                   StrokeShape="RoundRectangle 10"
+                                                   Padding="0">
+                                                <Label Text="{Binding InizialeComune}"
+                                                       FontSize="24"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- COLONNA 2: CONTENUTO TESTO -->
+                                        <Grid Grid.Column="1"
+                                              Grid.Row="0"
+                                              ColumnDefinitions="*, Auto">
+
+                                            <!-- NOME CACCIA -->
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding name}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#1A237E"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1"
+                                                   VerticalOptions="Start" />
+
+                                            <!-- BADGE TOP (se presente) -->
+                                           <Border Grid.Column="1"
+                                                   Style="{StaticResource TopBadgeStyle}"
+                                                   IsVisible="{Binding IsTopCaccia}">
+                                                <Label Text="TOP"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- ORGANIZZATORE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="1"
+                                               Text="{Binding organizzatore}"
+                                               FontSize="13"
+                                               TextColor="#666666"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- COMUNE -->
+                                        <Label Grid.Column="1"
+                                               Grid.Row="2"
+                                               Text="{Binding comune}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#2196F3"
+                                               Margin="0,2,0,0" />
+
+                                        <!-- LOCALITÀ -->
+                                        <Label Grid.Column="0"
+                                               Grid.ColumnSpan="2"
+                                               Grid.Row="3"
+                                               Text="{Binding localitaCaccia}"
+                                               FontSize="12"
+                                               TextColor="#757575"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Margin="0,8,0,0" />
+
+                                        <!-- RIGA INFERIORE: TAPPE, LUNGHEZZA, DATE -->
+                                        <HorizontalStackLayout Grid.Column="0"
+                                                               Grid.ColumnSpan="2"
+                                                               Grid.Row="4"
+                                                               Spacing="15"
+                                                               Margin="0,8,0,0">
+
+                                            <!-- TAPPE -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="🚩"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding numTappeCaccia}"
+                                                       FontSize="12"
+                                                       TextColor="#4CAF50"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- LUNGHEZZA -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="📏"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding lunghezzaCaccia, Converter={StaticResource LunghezzaFormatter}}"
+                                                       FontSize="12"
+                                                       TextColor="#FF9800"
+                                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- DATE (solo se presenti) -->
+                                            <HorizontalStackLayout Spacing="4" 
+                                                                   IsVisible="{Binding dataInizio, Converter={StaticResource NullToBoolConverter}}">
+                                                <Label Text="🗓️"
+                                                       FontSize="12" />
+                                                <Label Text="{Binding dataInizio, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="-"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                                <Label Text="{Binding dataFine, StringFormat='{0:dd/MM}'}"
+                                                       FontSize="11"
+                                                       TextColor="#666666" />
+                                            </HorizontalStackLayout>
+                                        </HorizontalStackLayout>
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <!-- MESSAGGIO SE NON CI SONO CACCE -->
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center"
+                                                 VerticalOptions="Center"
+                                                 HeightRequest="140">
+                                <Label Text="Nessuna caccia nello storico"
+                                       FontSize="14"
+                                       TextColor="#666666"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

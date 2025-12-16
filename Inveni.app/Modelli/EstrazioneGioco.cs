@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using System.Threading.Tasks;
 
 namespace Inveni.App.Modelli
@@ -49,6 +50,136 @@ namespace Inveni.App.Modelli
         // Campi data per filtro/stato
         public DateTime? dataInizio { get; set; }
         public DateTime? dataFine { get; set; }
+
+        public string PercorsoFotoCompleto
+        {
+            get
+            {
+                // SEMPLICE: Costruisci il percorso e basta
+                // Non controllare se il file esiste
+                // Il backend sa quello che fa
+
+                if (string.IsNullOrEmpty(comune) || string.IsNullOrEmpty(photo1))
+                    return null;
+
+                return Path.Combine(
+                    Costanti.PercorsiLocali.BaseArchivio,
+                    comune,
+                    Costanti.PercorsiLocali.CartellaFoto,
+                    photo1
+                );
+            }
+        }
+
+        /// <summary>
+        /// Colore del bordo in base allo stato della caccia
+        /// </summary>
+        public Color ColoreBordoStato
+        {
+            get
+            {
+                if (dataInizio == null || dataFine == null)
+                    return Costanti.ColoriStato.Storico;
+
+                var now = DateTime.Now;
+
+                if (dataInizio <= now && dataFine >= now)
+                    return Costanti.ColoriStato.GiocaOra;      // Attiva
+                else if (dataInizio > now)
+                    return Costanti.ColoriStato.InProgramma;   // Programmata
+                else
+                    return Costanti.ColoriStato.Storico;       // Storica
+            }
+        }
+
+        /// <summary>
+        /// Indica se la caccia è TOP (in evidenza)
+        /// </summary>
+        public bool IsTopCaccia => topCaccia == true;
+
+        /// <summary>
+        /// Testo del contatore stato (es: "3 cacce")
+        /// </summary>
+        public string ContatoreTesto(int conteggio)
+        {
+            return conteggio == 1 ? "1 caccia" : $"{conteggio} cacce";
+        }
+
+        /// <summary>
+        /// Ottiene l'iniziale del comune (per fallback)
+        /// </summary>
+        public string InizialeComune
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(comune))
+                    return "?";
+
+                return comune.Trim().Substring(0, 1).ToUpper();
+            }
+        }
+
+        /// <summary>
+        /// Colore per il fallback (se non c'è foto)
+        /// Basato sul nome del comune per consistenza
+        /// </summary>
+        public Color ColoreFallbackComune
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(comune))
+                    return Colors.Gray;
+
+                // Genera colore consistente dal nome del comune
+                var nome = comune.ToUpper();
+                var hash = nome.GetHashCode();
+
+                var coloriDisponibili = new[]
+                {
+                    Color.FromArgb("#2196F3"), // Blu
+                    Color.FromArgb("#4CAF50"), // Verde
+                    Color.FromArgb("#FF9800"), // Arancione
+                    Color.FromArgb("#9C27B0"), // Viola
+                    Color.FromArgb("#F44336"), // Rosso
+                    Color.FromArgb("#00BCD4"), // Ciano
+                };
+
+                var index = Math.Abs(hash) % coloriDisponibili.Length;
+                return coloriDisponibili[index];
+            }
+        }
+
+        /// <summary>
+        /// Proprietà che restituisce direttamente ImageSource
+        /// </summary>
+        public ImageSource FotoSource
+        {
+            get
+            {
+                // 1. Ottieni il percorso stringa
+                var percorso = PercorsoFotoCompleto;
+
+                // 2. Se non c'è percorso, ritorna null (fallback si attiva)
+                if (string.IsNullOrEmpty(percorso))
+                    return null;
+
+                // 3. Verifica se il file esiste
+                try
+                {
+                    if (System.IO.File.Exists(percorso))
+                    {
+                        // 4. Converti esplicitamente in ImageSource
+                        return ImageSource.FromFile(percorso);
+                    }
+                }
+                catch
+                {
+                    // Ignora errori, fallback si attiverà
+                }
+
+                return null;
+            }
+        }
     }
 }
 

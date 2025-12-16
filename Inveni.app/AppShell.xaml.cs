@@ -1,4 +1,6 @@
-﻿namespace Inveni.App
+﻿using Inveni.App.Pages;
+
+namespace Inveni.App
 {
     public partial class AppShell : Shell
     {
@@ -13,12 +15,14 @@
         private void RegisterRoutes()
         {
             // Registra tutte le pagine navigabili
-            Routing.RegisterRoute("GiocaOraPage", typeof(Views.GiocaOraPage));
-            Routing.RegisterRoute("InProgrammaPage", typeof(Views.InProgrammaPage));
-            Routing.RegisterRoute("StoricoPage", typeof(Views.StoricoPage));
+            Routing.RegisterRoute("GiocaOraPage", typeof(Pages.GiocaOraPage));
+            Routing.RegisterRoute("InProgrammaPage", typeof(Pages.InProgrammaPage));
+            Routing.RegisterRoute("StoricoPage", typeof(Pages.StoricoPage));
 
-            // Note: Le pagine dentro GiocaOra (Intorno, Città, etc.) 
-            // saranno gestite dal TabView dentro GiocaOraPage, non dalla Shell
+            Routing.RegisterRoute(nameof(VicinoAMePage), typeof(VicinoAMePage));
+            Routing.RegisterRoute(nameof(PerComunePage), typeof(PerComunePage));
+            Routing.RegisterRoute(nameof(OrganizzatoriPage), typeof(OrganizzatoriPage));
+            Routing.RegisterRoute(nameof(InEvidenzaPage), typeof(InEvidenzaPage));
         }
     }
 }

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
+             xmlns:modelli="clr-namespace:Inveni.App.Modelli"
+             xmlns:converters="clr-namespace:Inveni.App.ViewModels"
+             x:Class="Inveni.App.Pages.InEvidenzaPage"
+             x:DataType="viewmodels:InEvidenzaViewModel"
+             Title="IN EVIDENZA"
+             NavigationPage.HasNavigationBar="False">
+
+    <!-- RISORSE DELLA PAGINA -->
+    <ContentPage.Resources>
+        <!-- Converter per formattare la lunghezza -->
+        <converters:LunghezzaFormatterConverter x:Key="LunghezzaFormatter" />
+    </ContentPage.Resources>
+
+    <!-- REFRESH VIEW PER PULL-TO-REFRESH -->
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding CaricaCacceInEvidenzaCommand}"
+                 RefreshColor="#2196F3">
+
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+
+                <!-- =========================================== -->
+                <!-- HEADER: TITOLO "IN EVIDENZA" -->
+                <!-- =========================================== -->
+                <Border BackgroundColor="#FFD700" 
+                    Stroke="Transparent"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 0"
+                        HeightRequest="80"
+                        Margin="-10,0,-10,10">
+                    <HorizontalStackLayout Spacing="10"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center">
+
+                        <!-- ICONA STELLA PER EVIDENZA -->
+                        <Label Text="⭐"
+                               FontSize="28"
+                               VerticalOptions="Center" />
+
+                        <!-- TESTO TITOLO -->
+                        <Label Text="IN EVIDENZA"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="#1A237E" 
+                            VerticalOptions="Center" />
+
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- =========================================== -->
+                <!-- STATO: CARICAMENTO IN CORSO -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsCaricamento}"
+                                     Spacing="10"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="0,40">
+
+                    <!-- INDICATORE DI CARICAMENTO ROTANTE -->
+                    <ActivityIndicator IsRunning="True"
+                                       Color="#FFD700"
+                                       HorizontalOptions="Center" />
+
+                    <!-- MESSAGGIO DI CARICAMENTO -->
+                    <Label Text="Caricamento cacce in evidenza..."
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO: NESSUNA CACCIA IN EVIDENZA -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsVuoto}"
+                                     Spacing="20"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="20">
+
+                    <!-- ICONA STELLA VUOTA -->
+                    <Label Text="⭐"
+                           FontSize="40"
+                           HorizontalOptions="Center"
+                           TextColor="#E0E0E0" />
+
+                    <!-- MESSAGGIO DI NESSUN RISULTATO -->
+                    <Label Text="Nessuna caccia in evidenza"
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <Label Text="Le cacce in evidenza appariranno qui"
+                           FontSize="14"
+                           TextColor="#999999"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO: ERRORE DI CARICAMENTO -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsErrore}"
+                                     Spacing="20"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="20">
+
+                    <!-- ICONA DI ERRORE -->
+                    <Label Text="⚠️"
+                           FontSize="40"
+                           HorizontalOptions="Center"
+                           TextColor="#FF9800" />
+
+                    <!-- MESSAGGIO DI ERRORE DINAMICO -->
+                    <Label Text="{Binding MessaggioErrore}"
+                           FontSize="16"
+                           TextColor="#666666"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- PULSANTE PER RIPROVARE -->
+                    <Button Text="Riprova"
+                            BackgroundColor="Transparent"
+                            TextColor="#2196F3"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Command="{Binding RiprovaCommand}" />
+
+                </VerticalStackLayout>
+
+                <!-- =========================================== -->
+                <!-- STATO SUCCESSO: LISTA CACCE IN EVIDENZA -->
+                <!-- =========================================== -->
+                <!-- =========================================== -->
+                <!-- STATO SUCCESSO: LISTA CACCE IN EVIDENZA -->
+                <!-- =========================================== -->
+                <VerticalStackLayout IsVisible="{Binding IsSuccesso}"
+                     Spacing="0">
+
+                    <!-- INTESTAZIONE SEZIONE -->
+                    <HorizontalStackLayout Margin="15,10,15,5">
+                        <Label Text="CACCE PREMIUM"
+               FontSize="16"
+               FontAttributes="Bold"
+               TextColor="#1A237E"
+               HorizontalOptions="Start" />
+
+                        <Label Text="{Binding CacceInEvidenza.Count, StringFormat='{0} cacce'}"
+               FontSize="14"
+               TextColor="#666666" />
+                    </HorizontalStackLayout>
+
+                    <!-- LISTA VERTICALE CACCE -->
+                    <CollectionView ItemsSource="{Binding CacceInEvidenza}"
+                    SelectionMode="None">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="modelli:CacciaInEvidenza">
+
+                                <!-- CARD CACCIA IN EVIDENZA -->
+                                <Border Stroke="{Binding ColoreBordo}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        Margin="15,0,15,10"
+                        BackgroundColor="{Binding ColoreSfondo}"
+                        Padding="15">
+
+                                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, *"
+                          ColumnDefinitions="*, Auto"
+                          RowSpacing="4">
+
+                                        <!-- BADGE STATO (attiva/programmata) -->
+                                        <Border Grid.Row="0" Grid.Column="1"
+                                Stroke="Transparent"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 4"
+                                BackgroundColor="{Binding ColoreBordo}"
+                                Padding="6,2">
+                                            <Label Text="{Binding TestoStato}"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                                        </Border>
+
+                                        <!-- NOME CACCIA -->
+                                        <Label Grid.Row="0" Grid.Column="0"
+                               Text="{Binding Caccia.name}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#1A237E"
+                               LineBreakMode="TailTruncation"
+                               MaxLines="1" />
+
+                                        <!-- ORGANIZZATORE -->
+                                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                               Text="{Binding Caccia.organizzatore}"
+                               FontSize="13"
+                               TextColor="#666666"
+                               LineBreakMode="TailTruncation"
+                               MaxLines="1"
+                               Margin="0,2,0,0" />
+
+                                        <!-- COMUNE E LOCALITÀ -->
+                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                               Spacing="8"
+                                               Margin="0,4,0,0">
+                                            <Label Text="{Binding Caccia.comune}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3" />
+
+                                            <Label Text="{Binding Caccia.localitaCaccia}"
+                                   FontSize="12"
+                                   TextColor="#757575"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1" />
+                                        </HorizontalStackLayout>
+
+                                        <!-- TAPPE E LUNGHEZZA -->
+                                        <HorizontalStackLayout Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                               Spacing="15"
+                                               Margin="0,8,0,0">
+
+                                            <!-- TAPPE -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="🚩"
+                                       FontSize="12" />
+                                                <Label Text="{Binding Caccia.numTappeCaccia}"
+                                       FontSize="12"
+                                       TextColor="#4CAF50"
+                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- LUNGHEZZA -->
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="📏"
+                                       FontSize="12" />
+                                                <Label Text="{Binding Caccia.lunghezzaCaccia, Converter={StaticResource LunghezzaFormatter}}"
+                                       FontSize="12"
+                                       TextColor="#FF9800"
+                                       FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+
+                                        </HorizontalStackLayout>
+
+                                        <!-- DATE -->
+                                        <HorizontalStackLayout Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                               Spacing="5"
+                                               Margin="0,8,0,0">
+
+                                            <Label Text="🗓️"
+                                   FontSize="11" />
+
+                                            <Label Text="{Binding Caccia.dataInizio, StringFormat='{0:dd/MM}'}"
+                                   FontSize="11"
+                                   TextColor="#666666" />
+
+                                            <Label Text="-"
+                                   FontSize="11"
+                                   TextColor="#666666" />
+
+                                            <Label Text="{Binding Caccia.dataFine, StringFormat='{0:dd/MM}'}"
+                                   FontSize="11"
+                                   TextColor="#666666" />
+                                        </HorizontalStackLayout>
+
+                                        <!-- PULSANTE PER APRIRE -->
+                                        <Button Grid.Row="4" Grid.Column="1"
+                                Text="Apri →"
+                                BackgroundColor="Transparent"
+                                TextColor="#2196F3"
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                Padding="0"
+                                HorizontalOptions="End"
+                                VerticalOptions="End"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:InEvidenzaViewModel}}, Path=ApriDettaglioCacciaCommand}"
+                                CommandParameter="{Binding}" />
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>
