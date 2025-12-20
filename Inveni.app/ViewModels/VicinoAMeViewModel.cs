@@ -10,9 +10,34 @@ namespace Inveni.App.ViewModels
     {
         private readonly ApiServizio _apiServizio;
 
-        [ObservableProperty]        private bool _isRefreshing;
+        [ObservableProperty]
+        private bool _isRefreshing;
 
-        // USA EstrazioneGioco (o Gioco) DIRETTAMENTE
+        // STATI ACCORDION - USIAMO BACKING FIELDS TEMPORANEI
+        private bool _isGiocaOraEspanso = true;
+        private bool _isInProgrammaEspanso = false;
+        private bool _isStoricheEspanso = false;
+
+        // PROPRIETÀ PUBBLICHE (non automatiche per ora)
+        public bool IsGiocaOraEspanso
+        {
+            get => _isGiocaOraEspanso;
+            set => SetProperty(ref _isGiocaOraEspanso, value);
+        }
+
+        public bool IsInProgrammaEspanso
+        {
+            get => _isInProgrammaEspanso;
+            set => SetProperty(ref _isInProgrammaEspanso, value);
+        }
+
+        public bool IsStoricheEspanso
+        {
+            get => _isStoricheEspanso;
+            set => SetProperty(ref _isStoricheEspanso, value);
+        }
+
+        // Collezioni ESISTENTI
         public ObservableCollection<Gioco> CacceAttive { get; } = new();
         public ObservableCollection<Gioco> CacceProgrammate { get; } = new();
         public ObservableCollection<Gioco> CacceStoriche { get; } = new();
@@ -21,10 +46,29 @@ namespace Inveni.App.ViewModels
         {
             _apiServizio = apiServizio;
             Title = "VICINO A ME";
-
             Task.Run(async () => await CaricaDati());
         }
 
+        // COMANDI TOGGLE ACCORDION
+        [RelayCommand]
+        private void ToggleGiocaOra()
+        {
+            IsGiocaOraEspanso = !IsGiocaOraEspanso;
+        }
+
+        [RelayCommand]
+        private void ToggleInProgramma()
+        {
+            IsInProgrammaEspanso = !IsInProgrammaEspanso;
+        }
+
+        [RelayCommand]
+        private void ToggleStoriche()
+        {
+            IsStoricheEspanso = !IsStoricheEspanso;
+        }
+
+        // METODO CaricaDati
         [RelayCommand]
         private async Task CaricaDati()
         {
@@ -42,50 +86,46 @@ namespace Inveni.App.ViewModels
                     return;
                 }
 
-                Console.WriteLine($"✅ Ricevute {giochi.Count} cacce");
-
-                // Pulisci liste
-                CacceAttive.Clear();
-                CacceProgrammate.Clear();
-                CacceStoriche.Clear();
+                //Console.WriteLine($"✅ Ricevute {giochi.Count} cacce");
 
                 var now = DateTime.Now;
 
-                foreach (var gioco in giochi)
+                // USARE MainThread per modifiche UI
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // CALCOLA DISTANZA PER OGNI GIOCO
-                    var distanza = CalcolaDistanza(gioco.lat, gioco.lon);
+                    // Pulisci liste
+                    CacceAttive.Clear();
+                    CacceProgrammate.Clear();
+                    CacceStoriche.Clear();
 
-                    // AGGIUNGI PROPRIETÀ DISTANZA (se serve)
-                    // Potremmo creare una classe wrapper o aggiungere property
-
-                    // FILTRA PER DATA
-                    if (gioco.dataInizio == null || gioco.dataFine == null)
-                        continue;
-
-                    if (gioco.dataInizio <= now && gioco.dataFine >= now)
+                    foreach (var gioco in giochi)
                     {
-                        CacceAttive.Add(gioco);
-                        Console.WriteLine($"🎯 ATTIVA: {gioco.name} ({gioco.comune}) - {distanza:F1}km");
-                    }
-                    else if (gioco.dataInizio > now)
-                    {
-                        CacceProgrammate.Add(gioco);
-                        Console.WriteLine($"📅 PROGRAMMATA: {gioco.name}");
-                    }
-                    else // gioco.dataFine < now
-                    {
-                        CacceStoriche.Add(gioco);
-                        Console.WriteLine($"📚 STORICA: {gioco.name}");
-                    }
-                }
+                        // Filtra per data
+                        if (gioco.dataInizio == null || gioco.dataFine == null)
+                        {
+                            Console.WriteLine("   ❌ date null - salto");
+                            continue;
+                        }
 
-                Console.WriteLine($"📊 Statistiche: {CacceAttive.Count} attive, {CacceProgrammate.Count} programmate, {CacceStoriche.Count} storiche");
+                        if (gioco.dataInizio <= now && gioco.dataFine >= now)
+                        {
+                            CacceAttive.Add(gioco);
+                            Console.WriteLine($"   ✅ Aggiunta a ATTIVE");
+                        }
+                        else if (gioco.dataInizio > now)
+                        {
+                            CacceProgrammate.Add(gioco);
+                            Console.WriteLine($"   ✅ Aggiunta a PROGRAMMATE");
+                        }
+                        else // gioco.dataFine < now
+                        {
+                            CacceStoriche.Add(gioco);
+                            Console.WriteLine($"   ✅ Aggiunta a STORICHE");
+                        }
+                    }
 
-                // Ordina per distanza
-                OrdinaPerDistanza(CacceAttive);
-                OrdinaPerDistanza(CacceProgrammate);
-                OrdinaPerDistanza(CacceStoriche);
+                    //Console.WriteLine($"📊 Statistiche: {CacceAttive.Count} attive, {CacceProgrammate.Count} programmate, {CacceStoriche.Count} storiche");
+                });
 
             }
             catch (Exception ex)
@@ -100,29 +140,7 @@ namespace Inveni.App.ViewModels
             }
         }
 
-        private void OrdinaPerDistanza(ObservableCollection<Gioco> lista)
-        {
-            // Ordina per distanza calcolata
-            var ordinata = lista.OrderBy(g => CalcolaDistanza(g.lat, g.lon)).ToList();
-            lista.Clear();
-            foreach (var item in ordinata)
-            {
-                lista.Add(item);
-            }
-        }
-
-        private double CalcolaDistanza(double lat, double lon)
-        {
-            // Simulazione: distanza da Roma (41.9028, 12.4964)
-            var romaLat = 41.9028;
-            var RomaLon = 12.4964;
-
-            // Formula semplificata
-            var diffLat = lat - romaLat;
-            var diffLon = lon - RomaLon;
-            return Math.Sqrt(diffLat * diffLat + diffLon * diffLon) * 111; // 1 grado ≈ 111km
-        }
-
+        // METODO Refresh (ESISTENTE - nessuna modifica)
         [RelayCommand]
         private async Task Refresh()
         {

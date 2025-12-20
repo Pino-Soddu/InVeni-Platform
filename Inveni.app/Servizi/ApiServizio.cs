@@ -8,7 +8,10 @@ namespace Inveni.App.Servizi;
 /// </summary>
 public class ApiServizio
 {
-    private const string UrlBase = "https://10.0.2.2:7124";  // HTTPS per emulatore
+    private const string UrlBase = "http://10.64.254.197:5000";  // RETE ILIAD
+    //private const string UrlBase = "http://192.168.137.1:5000";  // RETE VODAFONE
+    
+    //private const string UrlBase = "https://10.0.2.2:7124";  // EMULATORE
 
     /// <summary>
     /// Ottiene la lista delle cacce disponibili dal backend

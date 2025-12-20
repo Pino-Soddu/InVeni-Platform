@@ -121,4 +121,47 @@ namespace Inveni.App.ViewModels
             throw new NotImplementedException();
         }
     }
+
+
+    /// <summary>
+    /// Converter per frecce accordion (▲/▼)
+    /// </summary>
+    public class BoolToArrowConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue)
+            {
+                return boolValue ? "▲" : "▼";  // Su: ▲, Giù: ▼
+                                               // Alternative: "▾" / "▴" o "↑" / "↓"
+            }
+            return "▼"; // Default
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Converter per mostrare elemento solo se count = 0
+    /// </summary>
+    public class IntToInverseBoolConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is int intValue)
+            {
+                return intValue == 0; // True se count = 0
+            }
+            return false;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }
