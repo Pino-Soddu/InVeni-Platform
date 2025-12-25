@@ -4,42 +4,11 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Inveni.App.Pages"
-    xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
     Title="Inveni"
-    FlyoutBehavior="Disabled"
-    Shell.TabBarIsVisible="True">
+    FlyoutBehavior="Disabled">
 
-    <!-- TabBar con 4 tab -->
-    <TabBar>
-
-        <!-- TAB 1: VICINO A ME -->
-        <Tab Title="VICINO A ME" Icon="play_circle_outline.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate pages:VicinoAMePage}"
-                Route="VicinoAMePage" />
-        </Tab>
-
-        <!-- TAB 2: PER COMUNE -->
-        <Tab Title="PER COMUNE" Icon="event_available.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate pages:PerComunePage}"
-                Route="PerComunePage" />
-        </Tab>
-
-        <!-- TAB 3: ORGANIZZATORI -->
-        <Tab Title="ORGANIZZATORI" Icon="history.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate pages:OrganizzatoriPage}"
-                Route="OrganizzatoriPage" />
-        </Tab>
-
-        <!-- TAB 4: IN EVIDENZA -->
-        <Tab Title="IN EVIDENZA" Icon="star.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate pages:InEvidenzaPage}"
-                Route="InEvidenzaPage" />
-        </Tab>
-
-    </TabBar>
+    <ShellContent
+        ContentTemplate="{DataTemplate pages:MainTabPage}"
+        Route="VicinoAMePage" />
 
 </Shell>

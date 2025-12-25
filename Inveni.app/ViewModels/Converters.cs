@@ -87,6 +87,7 @@ namespace Inveni.App.ViewModels
     /// </summary>
     public class MaggioreDiZeroConverter : IValueConverter
     {
+        public static MaggioreDiZeroConverter Instance { get; } = new MaggioreDiZeroConverter();
         /// <summary>
         /// Converte un valore numerico in booleano (true se > 0)
         /// </summary>
@@ -128,6 +129,7 @@ namespace Inveni.App.ViewModels
     /// </summary>
     public class BoolToArrowConverter : IValueConverter
     {
+        public static BoolToArrowConverter Instance { get; } = new BoolToArrowConverter();
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is bool boolValue)
@@ -163,5 +165,57 @@ namespace Inveni.App.ViewModels
             throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Converter per il colore delle tab di navigazione
+    /// Restituisce colore attivo (#2196F3) o inattivo (#666666) in base allo stato
+    /// </summary>
+    public class TabColorConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converte lo stato della tab (bool) in colore del testo
+        /// </summary>
+        /// <param name="value">bool che indica se la tab è attiva</param>
+        /// <returns>Colore blu per tab attiva, grigio per inattiva</returns>
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool isActive)
+            {
+                // Tab attiva: blu primario dell'app
+                // Tab inattiva: grigio medio
+                return isActive ?
+                    Color.FromArgb("#2196F3") :  // Blu attivo
+                    Color.FromArgb("#666666");   // Grigio inattivo
+            }
+
+            // Valore di default se non è bool
+            return Color.FromArgb("#666666");
+        }
+
+        /// <summary>
+        /// Conversione inversa (non utilizzata in questo caso)
+        /// </summary>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Converter che restituisce True se la stringa non è null o vuota
+    /// </summary>
+    public class StringToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !string.IsNullOrEmpty(value as string);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
 }

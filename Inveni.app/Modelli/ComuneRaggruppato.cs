@@ -16,5 +16,29 @@ namespace Inveni.App.Modelli
         {
             NomeComune = nomeComune;
         }
+
+        public string ImmagineComune
+        {
+            get
+            {
+                // Costruisci: "comune_" + nomedelcomune (senza spazi, lowercase)
+                var nomeFile = NomeComune
+                    .ToLower()
+                    .Replace(" ", "")
+                    .Replace("'", "");
+
+                return $"comune_{nomeFile}.png";
+            }
+        }
+
+        public Color ColoreBordoStato
+        {
+            get
+            {
+                if (CacceAttive > 0) return Color.FromArgb("#4CAF50");    // Verde per attive
+                if (CacceProgrammate > 0) return Color.FromArgb("#FF9800"); // Arancione per programmate
+                return Color.FromArgb("#666666");                         // Grigio per scadute
+            }
+        }
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Inveni.App.Controls"
+             x:Class="Inveni.App.Pages.MainTabPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- TAB BAR -->
+        <Border Grid.Row="0"
+                BackgroundColor="#0D47A1"
+                HeightRequest="60"
+                StrokeShape="RoundRectangle 0,0,0,12"
+                Margin="-1,0,-1,0">
+
+            <controls:TabNavigationView x:Name="TabNavigation" />
+
+        </Border>
+
+        <!-- CONTENUTO DINAMICO (qui andranno le pagine) -->
+        <ContentView Grid.Row="1" x:Name="PageContainer">
+            <!-- Per ora vuoto, verrà popolato via code -->
+        </ContentView>
+
+    </Grid>
+</ContentPage>

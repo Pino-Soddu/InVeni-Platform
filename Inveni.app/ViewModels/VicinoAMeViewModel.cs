@@ -2,13 +2,35 @@
 using CommunityToolkit.Mvvm.Input;
 using Inveni.App.Modelli;
 using Inveni.App.Servizi;
+using Inveni.App.Controls;
 using System.Collections.ObjectModel;
 
 namespace Inveni.App.ViewModels
 {
     public partial class VicinoAMeViewModel : BaseViewModel
     {
+
         private readonly ApiServizio _apiServizio;
+        private ObservableCollection<TabItem> _tabItems;
+        public ObservableCollection<TabItem> TabItems
+        {
+            get => _tabItems;
+            set => SetProperty(ref _tabItems, value);
+        }
+
+        private TabItem _selectedTab;
+        public TabItem SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                if (SetProperty(ref _selectedTab, value) && value != null)
+                {
+                    // Quando cambia tab, aggiorna tutti gli stati
+                    UpdateTabStates();
+                }
+            }
+        }
 
         [ObservableProperty]
         private bool _isRefreshing;
@@ -46,7 +68,54 @@ namespace Inveni.App.ViewModels
         {
             _apiServizio = apiServizio;
             Title = "VICINO A ME";
+
+            // --- AGGIUNGI QUESTA RIGA ---
+            InitializeTabItems();
+
             Task.Run(async () => await CaricaDati());
+        }
+
+        // --- AGGIUNGI QUESTO METODO QUI ---
+        private void InitializeTabItems()
+        {
+            TabItems = new ObservableCollection<TabItem>
+    {
+        new TabItem
+        {
+            Title = "VICINO A ME",
+            IsActive = true,
+            SelectCommand = new RelayCommand(() => SelectTab(0))
+        },
+        new TabItem
+        {
+            Title = "PER COMUNE",
+            IsActive = false,
+            SelectCommand = new RelayCommand(() => SelectTab(1))
+        },
+        new TabItem
+        {
+            Title = "ORGANIZZATORE",
+            IsActive = false,
+            SelectCommand = new RelayCommand(() => SelectTab(2))
+        },
+        new TabItem
+        {
+            Title = "IN EVIDENZA",
+            IsActive = false,
+            SelectCommand = new RelayCommand(() => SelectTab(3))
+        }
+    };
+
+            SelectedTab = TabItems.FirstOrDefault();
+        }
+
+        // --- AGGIUNGI ANCHE QUESTO METODO ---
+        private void SelectTab(int index)
+        {
+            if (index >= 0 && index < TabItems.Count)
+            {
+                SelectedTab = TabItems[index];
+            }
         }
 
         // COMANDI TOGGLE ACCORDION
@@ -146,5 +215,16 @@ namespace Inveni.App.ViewModels
         {
             await CaricaDati();
         }
+
+        private void UpdateTabStates()
+        {
+            if (TabItems == null) return;
+
+            foreach (var tab in TabItems)
+            {
+                tab.IsActive = (tab == SelectedTab);
+            }
+        }
+
     }
 }

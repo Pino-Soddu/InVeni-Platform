@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Inveni.App.Servizi;
 using Inveni.App.Modelli;
+using Inveni.App.Pages;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.ApplicationModel;
 
@@ -11,6 +12,7 @@ namespace Inveni.App.ViewModels
     public partial class PerComuneViewModel : BaseViewModel
     {
         private readonly ApiServizio _apiServizio;
+        private List<ComuneRaggruppato> _tuttiComuni = new();
 
         // ============================================
         // PROPRIETÀ OBSERVABLE (SENZA UNDERSCORE PER AVVISI)
@@ -22,13 +24,16 @@ namespace Inveni.App.ViewModels
         [ObservableProperty] private bool isVuoto;
         [ObservableProperty] private bool isErrore;
         [ObservableProperty] private string messaggioErrore = string.Empty;
-        [ObservableProperty] private string testoRicerca = string.Empty;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ComuniFiltrati))]
+        private string testoRicerca = string.Empty;
 
         // ============================================
         // PROPRIETÀ PUBBLICHE
         // ============================================
 
         public ObservableCollection<ComuneRaggruppato> ComuniRaggruppati { get; } = new();
+        public ObservableCollection<ComuneRaggruppato> ComuniFiltrati { get; } = new();
 
         // ============================================
         // COSTRUTTORE
@@ -71,23 +76,20 @@ namespace Inveni.App.ViewModels
                     return;
                 }
 
-                Console.WriteLine($"✅ Ricevute {giochi.Count} cacce dal backend");
-
                 // 2. RAGGRUPPA PER COMUNE
                 var comuniRaggruppati = RaggruppaPerComune(giochi);
+                _tuttiComuni = comuniRaggruppati;  // SALVA LISTA COMPLETA
 
-                // 3. AGGIORNA LA LISTA VISIBILE - SENZA DISPATCH
-                Console.WriteLine($"🔍 Aggiorno lista con {comuniRaggruppati.Count} comuni");
-
+                // 3. AGGIORNA LE LISTE VISIBILI
                 ComuniRaggruppati.Clear();
+                ComuniFiltrati.Clear();  // AGGIUNGI
 
                 foreach (var comune in comuniRaggruppati)
                 {
                     ComuniRaggruppati.Add(comune);
-                    Console.WriteLine($"  • Aggiunto: {comune.NomeComune}");
+                    ComuniFiltrati.Add(comune);  // AGGIUNGI
+                    //Console.WriteLine($"  • Aggiunto: {comune.NomeComune}");
                 }
-
-                Console.WriteLine($"📊 FINITO: {ComuniRaggruppati.Count} comuni nella lista");
 
                 // 4. IMPOSTA STATO UI
                 IsCaricamento = false;
@@ -126,14 +128,14 @@ namespace Inveni.App.ViewModels
                 .GroupBy(g => g.comune.Trim().ToUpper())
                 .ToList();
 
-            Console.WriteLine($"🏙️ Trovati {gruppiPerComune.Count} comuni distinti");
+            //Console.WriteLine($"🏙️ Trovati {gruppiPerComune.Count} comuni distinti");
 
             foreach (var gruppo in gruppiPerComune)
             {
                 var nomeComune = gruppo.Key;
                 var cacceDelComune = gruppo.ToList();
 
-                Console.WriteLine($"  • {nomeComune}: {cacceDelComune.Count} cacce");
+                //Console.WriteLine($"  • {nomeComune}: {cacceDelComune.Count} cacce");
 
                 // 2. CALCOLA CONTEGGI PER STATO
                 int attive = 0;
@@ -170,33 +172,60 @@ namespace Inveni.App.ViewModels
             return risultato.OrderBy(c => c.NomeComune).ToList();
         }
 
+
         // ============================================
-        // COMANDI SECONDARI
+        // FILTRO RICERCA AUTOMATICO
         // ============================================
 
         /// <summary>
-        /// Comando per filtrare i comuni in base al testo di ricerca
+        /// Metodo chiamato automaticamente quando cambia il testo di ricerca
+        /// Gestisce il filtro in tempo reale dei comuni visualizzati
         /// </summary>
-        [RelayCommand]
-        private void Ricerca()
+        /// <param name="value">Nuovo valore della ricerca</param>
+        partial void OnTestoRicercaChanged(string value)
         {
-            Console.WriteLine($"Ricerca comuni: {TestoRicerca}");
+            FiltraComuni();
+        }
 
+        /// <summary>
+        /// Filtra la lista dei comuni in base al testo di ricerca
+        /// Mostra solo i comuni il cui nome contiene il testo cercato (case-insensitive)
+        /// Se la ricerca è vuota, mostra tutti i comuni
+        /// </summary>
+        private void FiltraComuni()
+        {
             if (string.IsNullOrWhiteSpace(TestoRicerca))
             {
-                // Se ricerca vuota, mostra tutti
-                foreach (var comune in ComuniRaggruppati)
+                // MOSTRA TUTTI I COMUNI
+                ComuniFiltrati.Clear();
+                foreach (var comune in _tuttiComuni)
                 {
-                    // TODO: Implementare filtro
+                    ComuniFiltrati.Add(comune);
                 }
             }
             else
             {
-                // TODO: Implementare filtro per nome comune
+                // FILTRA PER NOME COMUNE
                 var testo = TestoRicerca.Trim().ToUpper();
-                // Logica filtro da implementare
+                ComuniFiltrati.Clear();
+
+                foreach (var comune in _tuttiComuni)
+                {
+                    if (comune.NomeComune.ToUpper().Contains(testo))
+                    {
+                        ComuniFiltrati.Add(comune);
+                    }
+                }
             }
+
+            // AGGIORNA STATO DELLA UI
+            IsSuccesso = ComuniFiltrati.Count > 0;
+            IsVuoto = ComuniFiltrati.Count == 0;
         }
+
+        // ============================================
+        // COMANDI SECONDARI
+        // ============================================
 
         /// <summary>
         /// Comando per resettare la ricerca e mostrare tutti i comuni
@@ -206,7 +235,7 @@ namespace Inveni.App.ViewModels
         {
             TestoRicerca = string.Empty;
             // Ricarica tutti i comuni
-            CaricaComuniCommand.Execute(null);
+            //CaricaComuniCommand.Execute(null);
         }
 
         /// <summary>
@@ -222,18 +251,25 @@ namespace Inveni.App.ViewModels
         /// Comando per vedere le cacce dettaglio di un comune
         /// </summary>
         [RelayCommand]
-        private void VediCacce(ComuneRaggruppato comune)
+        private async Task VediCacce(ComuneRaggruppato comune)
         {
             if (comune == null) return;
 
-            Console.WriteLine($"Selezionato comune: {comune.NomeComune}");
-            Console.WriteLine($"  • Totale cacce: {comune.TotaleCacce}");
-            Console.WriteLine($"  • Attive: {comune.CacceAttive}");
-            Console.WriteLine($"  • Programmate: {comune.CacceProgrammate}");
-            Console.WriteLine($"  • Scadute/Disponibili: {comune.CacceScaduteDisponibili}");
+            Console.WriteLine($"DEBUG: Navigazione a dettaglio per {comune.NomeComune}");
 
-            // TODO: Naviga a pagina dettaglio comune
-            // await Shell.Current.GoToAsync($"dettaglioComune?nome={comune.NomeComune}");
+            // ★★★ CREA NUOVA PAGINA E USA SetComune ★★★
+            var dettaglioPage = new DettaglioComunePage();
+            dettaglioPage.SetComune(comune.NomeComune);
+
+            // Naviga
+            await Shell.Current.Navigation.PushAsync(dettaglioPage);
         }
     }
 }
+
+
+
+
+
+
+

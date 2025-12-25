@@ -2,11 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
-             xmlns:modelli="clr-namespace:Inveni.App.Modelli"
              xmlns:converters="clr-namespace:Inveni.App.ViewModels"
+             xmlns:modelli="clr-namespace:Inveni.App.Modelli" 
              x:Class="Inveni.App.Pages.OrganizzatoriPage"
              x:DataType="viewmodels:OrganizzatoriViewModel"
-             Title="ORGANIZZATORI"
+             Title="PER ORGANIZZATORE"
              NavigationPage.HasNavigationBar="False">
 
     <!-- RISORSE DELLA PAGINA -->
@@ -24,49 +24,47 @@
             <VerticalStackLayout Spacing="0">
 
                 <!-- =========================================== -->
-                <!-- HEADER: TITOLO "ORGANIZZATORI" -->
-                <!-- =========================================== -->
-                <Border BackgroundColor="#2196F3"
-                        Stroke="Transparent"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 0"
-                        HeightRequest="80"
-                        Margin="-10,0,-10,10">
-                    <Label Text="ORGANIZZATORI"
-                           FontSize="22"
-                           FontAttributes="Bold"
-                           TextColor="White"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-                </Border>
-
-                <!-- =========================================== -->
-                <!-- BARRA DI RICERCA ORGANIZZATORI -->
+                <!-- BARRA DI RICERCA ORGANIZZATORI (FLOATING COMPATTA) -->
                 <!-- =========================================== -->
                 <Border BackgroundColor="White"
-                        Stroke="Transparent"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 10"
-                        Margin="15,0,15,15"
-                        Padding="15">
+                    StrokeShape="RoundRectangle 20"
+                    Margin="20,10,20,15"
+                    Padding="0"
+                    HeightRequest="40">
 
-                    <HorizontalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,0">
 
-                        <!-- ICONA LUPA PER RICERCA -->
-                        <Label Text="🔍"
-                               FontSize="20"
-                               VerticalOptions="Center" />
+                        <!-- ICONA LUPA -->
+                        <Label Grid.Column="0"
+                           Text="🔍"
+                           FontSize="16"
+                           VerticalOptions="Center"
+                           Margin="5,0,10,0" />
 
-                        <!-- CAMPO DI TESTO PER RICERCA ORGANIZZATORI -->
-                        <Entry Placeholder="Cerca organizzatore..."
-                               PlaceholderColor="#999999"
-                               ClearButtonVisibility="WhileEditing"
-                               FontSize="16"
-                               HorizontalOptions="Fill"
-                               VerticalOptions="Center"
-                               Text="{Binding TestoRicerca, Mode=TwoWay}" />
+                        <!-- CAMPO RICERCA -->
+                        <Entry Grid.Column="1"
+                           Placeholder="Cerca organizzatore..."
+                           PlaceholderColor="#999999"
+                           ClearButtonVisibility="WhileEditing"
+                           FontSize="14"
+                           BackgroundColor="Transparent"
+                           VerticalOptions="Center"
+                           Text="{Binding TestoRicerca, Mode=TwoWay}" />
 
-                    </HorizontalStackLayout>
+                        <!-- PULSANTE CANCELLA (visibile solo se c'è testo) -->
+                        <Button Grid.Column="2"
+                            Text="✕"
+                            FontSize="14"
+                            TextColor="#999999"
+                            BackgroundColor="Transparent"
+                            IsVisible="{Binding TestoRicerca, Converter={StaticResource StringToBool}}"
+                            Command="{Binding MostraTuttiCommand}"
+                            WidthRequest="30"
+                            HeightRequest="30"
+                            CornerRadius="15"
+                            Padding="0"
+                            Margin="5,0,0,0" />
+                    </Grid>
 
                 </Border>
 
@@ -102,7 +100,7 @@
                                      Margin="20">
 
                     <!-- ICONA ORGANIZZATORE VUOTO -->
-                    <Label Text="👤"
+                    <Label Text="🏙️"
                            FontSize="40"
                            HorizontalOptions="Center"
                            TextColor="#CCCCCC" />
@@ -159,111 +157,73 @@
                 <!-- =========================================== -->
                 <!-- STATO SUCCESSO: LISTA ORGANIZZATORI -->
                 <!-- =========================================== -->
-                <CollectionView ItemsSource="{Binding OrganizzatoriRaggruppati}"
-                                SelectionMode="None"
-                                IsVisible="{Binding IsSuccesso}">
+                <CollectionView ItemsSource="{Binding OrganizzatoriFiltrati}"
+                SelectionMode="None"
+                IsVisible="{Binding IsSuccesso}">
 
                     <!-- TEMPLATE PER OGNI ORGANIZZATORE -->
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="modelli:OrganizzatoreRaggruppato">
 
-                            <!-- CARD SINGOLA ORGANIZZATORE -->
-                            <Border Stroke="Transparent"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 12"
-                                    Margin="15,0,15,10"
-                                    Padding="20"
-                                    BackgroundColor="White">
+                            <!-- CARD ORGANIZZATORE - STILE SIMPLIFICATO -->
+                            <Border StrokeShape="RoundRectangle 12"
+            BackgroundColor="White"
+            Stroke="{Binding ColoreBordoStato}"
+            StrokeThickness="2"
+            Padding="0"
+            Margin="15,0,15,10">
 
-                                <VerticalStackLayout Spacing="8">
+                                <Grid RowDefinitions="160, Auto, Auto" RowSpacing="0">
 
-                                    <!-- RIGA SUPERIORE: NOME ORGANIZZATORE E TOTALE -->
-                                    <HorizontalStackLayout>
+                                    <!-- RIGA 0: IMMAGINE ORGANIZZATORE -->
+                                    <Image Grid.Row="0"
+                   Source="{Binding ImmagineOrganizzatore}"
+                   Aspect="AspectFill"
+                   HeightRequest="160" />
 
-                                        <!-- NOME DELL'ORGANIZZATORE -->
+                                    <!-- RIGA 1: NOME ORGANIZZATORE · X CACCE (stile GIOCA ORA) -->
+                                    <HorizontalStackLayout Grid.Row="1" 
+                                   Padding="15,12,15,8"
+                                   Spacing="8"
+                                   VerticalOptions="Center">
+
                                         <Label Text="{Binding NomeOrganizzatore}"
-                                               FontSize="18"
-                                               FontAttributes="Bold"
-                                               TextColor="#1A237E"
-                                               HorizontalOptions="Start"
-                                               VerticalTextAlignment="Center" />
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#1A237E"
+                       LineBreakMode="TailTruncation"
+                       MaxLines="1"
+                       VerticalTextAlignment="Center" />
 
-                                        <!-- CONTATORE TOTALE CACCE -->
-                                        <Label Text="{Binding TotaleCacce, StringFormat='({0})'}"
-                                               FontSize="16"
-                                               TextColor="#2196F3"
-                                               FontAttributes="Bold"
-                                               VerticalTextAlignment="Center" />
+                                        <Label Text="·"
+                       FontSize="16"
+                       TextColor="#666666"
+                       VerticalTextAlignment="Center" />
+
+                                        <Label Text="{Binding TotaleCacce, StringFormat='{0} cacce'}"
+                       FontSize="16"
+                       TextColor="#666666"
+                       VerticalTextAlignment="Center" />
 
                                     </HorizontalStackLayout>
 
-                                    <!-- RIGA INFERIORE: CONTATORI PER STATO -->
-                                    <VerticalStackLayout Spacing="4">
-
-                                        <!-- CACCE ATTIVE (SOLO SE > 0) -->
-                                        <HorizontalStackLayout 
-                                            IsVisible="{Binding CacceAttive, Converter={StaticResource MaggioreDiZero}}"
-                                            Spacing="6">
-
-                                            <Label Text="🟢"
-                                                   FontSize="14"
-                                                   VerticalTextAlignment="Center" />
-
-                                            <Label Text="{Binding CacceAttive, StringFormat='{0} attive'}"
-                                                   FontSize="14"
-                                                   TextColor="#4CAF50"
-                                                   VerticalTextAlignment="Center" />
-
-                                        </HorizontalStackLayout>
-
-                                        <!-- CACCE PROGRAMMATE (SOLO SE > 0) -->
-                                        <HorizontalStackLayout 
-                                            IsVisible="{Binding CacceProgrammate, Converter={StaticResource MaggioreDiZero}}"
-                                            Spacing="6">
-
-                                            <Label Text="🟠"
-                                                   FontSize="14"
-                                                   VerticalTextAlignment="Center" />
-
-                                            <Label Text="{Binding CacceProgrammate, StringFormat='{0} programmate'}"
-                                                   FontSize="14"
-                                                   TextColor="#FF9800"
-                                                   VerticalTextAlignment="Center" />
-
-                                        </HorizontalStackLayout>
-
-                                        <!-- CACCE SCADUTE/DISPONIBILI (SOLO SE > 0) -->
-                                        <HorizontalStackLayout 
-                                            IsVisible="{Binding CacceScaduteDisponibili, Converter={StaticResource MaggioreDiZero}}"
-                                            Spacing="6">
-
-                                            <Label Text="⚪"
-                                                   FontSize="14"
-                                                   VerticalTextAlignment="Center" />
-
-                                            <Label Text="{Binding CacceScaduteDisponibili, StringFormat='{0} scadute/disponibili'}"
-                                                   FontSize="14"
-                                                   TextColor="#666666"
-                                                   VerticalTextAlignment="Center" />
-
-                                        </HorizontalStackLayout>
-
-                                    </VerticalStackLayout>
-
-                                    <!-- PULSANTE PER VEDERE CACCE DETTAGLIO -->
-                                    <Button Text="Vedi cacce →"
-                                            BackgroundColor="Transparent"
-                                            TextColor="#2196F3"
+                                    <!-- RIGA 2: PULSANTE VEDI CACCE (badge stile TOP) -->
+                                    <Grid Grid.Row="2" Padding="15,0,15,10">
+                                        <Button Text="VEDI CACCE →"
+                                            BackgroundColor="#2196F3"
+                                            TextColor="White"
                                             FontAttributes="Bold"
-                                            HorizontalOptions="End"
-                                            Padding="0,5"
+                                            FontSize="12"
+                                            HorizontalOptions="Center"
+                                            CornerRadius="20"
+                                            HeightRequest="32"
+                                            Padding="20,0"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:OrganizzatoriViewModel}}, Path=VediCacceCommand}"
                                             CommandParameter="{Binding}" />
+                                    </Grid>
 
-                                </VerticalStackLayout>
-
+                                </Grid>
                             </Border>
-
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 

@@ -80,7 +80,7 @@ namespace Inveni.App.ViewModels
                     return;
                 }
 
-                Console.WriteLine($"✅ Ricevute {giochi.Count} cacce dal backend");
+                //Console.WriteLine($"✅ Ricevute {giochi.Count} cacce dal backend");
 
                 // 2. FILTRA E TRASFORMA IN CACCE IN EVIDENZA
                 var cacceFiltrate = FiltraCacceInEvidenza(giochi);
@@ -95,7 +95,7 @@ namespace Inveni.App.ViewModels
                         CacceInEvidenza.Add(cacciaFiltrata);
                     }
 
-                    Console.WriteLine($"⭐ Trovate {CacceInEvidenza.Count} cacce in evidenza");
+                    //Console.WriteLine($"⭐ Trovate {CacceInEvidenza.Count} cacce in evidenza");
 
                     // 4. IMPOSTA STATO UI
                     IsCaricamento = false;
@@ -135,7 +135,7 @@ namespace Inveni.App.ViewModels
                 .Where(g => g.dataInizio != null && g.dataFine != null)  // Con date valide
                 .ToList();
 
-            Console.WriteLine($"🔍 Trovate {cacceTop.Count} cacce TOP totali");
+            //Console.WriteLine($"🔍 Trovate {cacceTop.Count} cacce TOP totali");
 
             // 2. SEPARA ATTIVE E PROGRAMMATE
             var cacceAttive = cacceTop
@@ -148,8 +148,8 @@ namespace Inveni.App.ViewModels
                 .OrderBy(g => g.dataInizio)  // Ordina per data inizio (più vicine prima)
                 .ToList();
 
-            Console.WriteLine($"  • Attive: {cacceAttive.Count}");
-            Console.WriteLine($"  • Programmate: {cacceProgrammate.Count}");
+            //Console.WriteLine($"  • Attive: {cacceAttive.Count}");
+            //Console.WriteLine($"  • Programmate: {cacceProgrammate.Count}");
 
             // 3. CREA WRAPPER PER OGNI CACCIA
             foreach (var caccia in cacceAttive.Concat(cacceProgrammate))
