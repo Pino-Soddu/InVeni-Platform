@@ -1,6 +1,7 @@
 ﻿using Inveni.App.ViewModels;
 using Inveni.App.Servizi;
 using Microsoft.Maui.Controls;
+using Inveni.App.Modelli;  
 
 namespace Inveni.App.Pages
 {
@@ -11,16 +12,26 @@ namespace Inveni.App.Pages
             InitializeComponent();
         }
 
-        // ★★★★ METODO SEMPLIFICATO ★★★★
+        // ★★★ METODO PER IMPOSTARE ORGANIZZATORE (già esistente) ★★★
         public void SetOrganizzatore(string nomeOrganizzatore)
         {
-            // ★★★ CREA VIEWMODEL CON IL NOME GIÀ NEL COSTRUTTORE ★★★
             var apiServizio = new ApiServizio();
             var viewModel = new DettaglioOrganizzatoreViewModel(apiServizio, nomeOrganizzatore);
-
             BindingContext = viewModel;
+        }
 
-            Console.WriteLine($"★★★ SetOrganizzatore: {nomeOrganizzatore}");
+        // ★★★★ METODO NUOVO PER GESTIRE IL TAP ★★★★
+        private async void OnDettagliTapped(object sender, EventArgs e)
+        {
+            // 1. Trova la card cliccata
+            if (sender is Border border && border.BindingContext is Gioco caccia)
+            {
+                // 2. Prendi l'ID
+                int cacciaId = caccia.IdGioco;
+
+                // 3. Apri la scheda (Navigation è disponibile perché siamo in una Page)
+                await Navigation.PushAsync(new DettaglioCacciaPage(cacciaId));
+            }
         }
     }
 }

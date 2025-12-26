@@ -10,6 +10,7 @@ namespace Inveni.App.ViewModels
 {
     public partial class DettaglioOrganizzatoreViewModel : BaseViewModel
     {
+
         private readonly ApiServizio _apiServizio;
         private string _nomeOrganizzatore;
 
@@ -109,6 +110,7 @@ namespace Inveni.App.ViewModels
             // ★★★ CARICA I DATI SUBITO ★★★
             Task.Run(async () => await CaricaCacceOrganizzatore());
         }
+
 
         // ============================================
         // COMANDO PRINCIPALE: CARICA CACCE DEL ORGANIZZATORE
@@ -247,15 +249,5 @@ namespace Inveni.App.ViewModels
             IsStoricheEspanso = !IsStoricheEspanso;
         }
 
-        [RelayCommand]
-        private async Task VaiADettaglioCaccia(Gioco caccia)
-        {
-            Console.WriteLine($"DEBUG: Navigazione a dettaglio caccia: {caccia?.name}");
-
-            if (caccia != null)
-            {
-                await Shell.Current.GoToAsync($"//MainTab/DettaglioCacciaPage?cacciaId={caccia.IdGioco}");
-            }
-        }
     }
 }

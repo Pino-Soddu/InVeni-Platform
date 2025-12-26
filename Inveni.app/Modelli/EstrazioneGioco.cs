@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Inveni.App.Modelli
@@ -10,6 +10,8 @@ namespace Inveni.App.Modelli
     public class Gioco
     {
         public int IdUtente { get; set; }               // id Utente (Serve per ricostruire il gioco dell'Utente)
+        
+        [JsonPropertyName("idGioco")]
         public int IdGioco { get; set; }                // id Gioco
         public int _id { get; set; }                    // Progressivo Tappa
         public int? idGruppo { get; set; }              // Progressivo Gruppo (identifica e associa tutte le schede di una caccia)

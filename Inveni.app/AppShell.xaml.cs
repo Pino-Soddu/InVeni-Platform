@@ -15,14 +15,15 @@ namespace Inveni.App
         private void RegisterRoutes()
         {
             // Registra tutte le pagine navigabili
-            Routing.RegisterRoute("GiocaOraPage", typeof(Pages.GiocaOraPage));
-            Routing.RegisterRoute("InProgrammaPage", typeof(Pages.InProgrammaPage));
-            Routing.RegisterRoute("StoricoPage", typeof(Pages.StoricoPage));
+
+            Routing.RegisterRoute(nameof(MainTabPage), typeof(MainTabPage));
 
             Routing.RegisterRoute(nameof(VicinoAMePage), typeof(VicinoAMePage));
             Routing.RegisterRoute(nameof(PerComunePage), typeof(PerComunePage));
             Routing.RegisterRoute(nameof(OrganizzatoriPage), typeof(OrganizzatoriPage));
             Routing.RegisterRoute(nameof(InEvidenzaPage), typeof(InEvidenzaPage));
+            Routing.RegisterRoute(nameof(DettaglioComunePage), typeof(DettaglioComunePage));
+            Routing.RegisterRoute(nameof(DettaglioOrganizzatorePage), typeof(DettaglioOrganizzatorePage));
         }
     }
 }

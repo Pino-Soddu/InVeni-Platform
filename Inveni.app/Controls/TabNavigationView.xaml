@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inveni.App.Controls.TabNavigationView"
+             x:Name="RootControl">
+
+    <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, *, Auto">
+
+        <!-- Area scrollabile tab DINAMICHE -->
+        <ScrollView Grid.Column="1"
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    x:Name="TabScrollView">
+
+            <HorizontalStackLayout x:Name="TabContainer" Spacing="0">
+                <!-- LE TAB VERRANNO GENERATE DINAMICAMENTE VIA BINDING -->
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border MinimumWidthRequest="130"
+                                Padding="20,16"
+                                BackgroundColor="Transparent"
+                                Stroke="Transparent"
+                                StrokeThickness="0">
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title}"
+                                       TextColor="{Binding TextColor}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextTransform="Uppercase"
+                                       HorizontalOptions="Center" />
+
+                                <BoxView HeightRequest="3"
+                                         BackgroundColor="White"
+                                         WidthRequest="100"
+                                         HorizontalOptions="Center"
+                                         IsVisible="{Binding IsActive}" />
+                            </VerticalStackLayout>
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentView>

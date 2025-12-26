@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Inveni.App.ViewModels"
+             xmlns:modelli="clr-namespace:Inveni.App.Modelli"
+             xmlns:converters="clr-namespace:Inveni.App.ViewModels"
+             x:Class="Inveni.App.Pages.DettaglioCacciaPage"
+             x:DataType="viewmodels:DettaglioCacciaViewModel"
+             Title="{Binding Title}">
+
+    <!-- RISORSE (Converter) -->
+    <ContentPage.Resources>
+        <converters:InverseBooleanConverter x:Key="Inverso" />
+        <converters:StringToBoolConverter x:Key="NonVuoto" />
+        <converters:BoolToArrowConverter x:Key="BoolToFreccia" />
+        <converters:LunghezzaFormatterConverter x:Key="FormattaLunghezza" />
+        <converters:MaggioreDiZeroConverter x:Key="MaggioreDiZero" />
+    </ContentPage.Resources>
+
+    <!-- STATI DELLA PAGINA -->
+    <Grid>
+        <!-- STATO CARICAMENTO -->
+        <VerticalStackLayout IsVisible="{Binding IsCaricamento}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="20">
+            <ActivityIndicator IsRunning="True" Color="#2196F3" />
+            <Label Text="Caricamento caccia..." TextColor="#666666" />
+        </VerticalStackLayout>
+
+        <!-- STATO ERRORE -->
+        <VerticalStackLayout IsVisible="{Binding IsErrore}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="20"
+                             Padding="30">
+            <Label Text="⚠️"
+                   FontSize="48"
+                   HorizontalOptions="Center" />
+            <Label Text="{Binding MessaggioErrore}"
+                   FontSize="16"
+                   TextColor="#666666"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap" />
+            <Button Text="Riprova"
+                    BackgroundColor="#2196F3"
+                    TextColor="White"
+                    Command="{Binding RiprovaCommand}"
+                    Padding="30,10"
+                    CornerRadius="20" />
+        </VerticalStackLayout>
+
+        <!-- STATO CONTENUTO PRINCIPALE -->
+        <ScrollView IsVisible="{Binding IsCaricamento, Converter={StaticResource Inverso}}">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- 1. HEADER CON FOTO E TITOLO -->
+                <Grid RowDefinitions="Auto, Auto, Auto" RowSpacing="0">
+                    <!-- FOTO PRINCIPALE -->
+                    <Image Grid.Row="0"
+                           Source="{Binding Caccia.FotoSemplice}"
+                           Aspect="AspectFill"
+                           HeightRequest="220" />
+
+                    <!-- OVERLAY SCURO PER LEGGIBILITÀ -->
+                    <BoxView Grid.Row="0"
+                             Color="#000000"
+                             Opacity="0.2"
+                             HeightRequest="220" />
+
+                    <!-- PULSANTE INDIETRO -->
+                    <Button Grid.Row="0"
+                            Text="←"
+                            FontSize="28"
+                            TextColor="White"
+                            BackgroundColor="Transparent"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            Margin="10"
+                            Command="{Binding TornaIndietroCommand}"
+                            HeightRequest="50"
+                            WidthRequest="50" />
+
+                    <!-- TITOLO E SOTTOTITOLO -->
+                    <VerticalStackLayout Grid.Row="1"
+                                         Padding="20,15"
+                                         Spacing="5"
+                                         BackgroundColor="White">
+                        <Label Text="{Binding Caccia.name}"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="#1A237E"
+                               LineBreakMode="TailTruncation"
+                               MaxLines="2" />
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="{Binding Caccia.comune}"
+                                   FontSize="14"
+                                   TextColor="#2196F3"
+                                   FontAttributes="Bold" />
+                            <Label Text="•"
+                                   FontSize="14"
+                                   TextColor="#666666" />
+                            <Label Text="{Binding Caccia.organizzatore}"
+                                   FontSize="14"
+                                   TextColor="#666666"
+                                   LineBreakMode="TailTruncation" />
+                        </HorizontalStackLayout>
+
+                        <!-- LOCALITÀ SPECIFICA -->
+                        <Label Text="{Binding Caccia.localitaCaccia}"
+                               FontSize="13"
+                               TextColor="#666666"
+                               Margin="0,5,0,0"
+                               IsVisible="{Binding Caccia.localitaCaccia, Converter={StaticResource NonVuoto}}" />
+                    </VerticalStackLayout>
+
+                    <!-- BADGE STATO -->
+                    <Border Grid.Row="2"
+                            BackgroundColor="{Binding Caccia.ColoreBordoStato}"
+                            StrokeShape="RoundRectangle 20,0,20,0"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            Margin="0,-15,20,0"
+                            Padding="15,8">
+                        <Label Text="{Binding TestoStato}"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center" />
+                    </Border>
+                </Grid>
+
+                <!-- 2. SEZIONE TESTO DESCRITTIVO -->
+                <Border Margin="20,20"
+                        StrokeShape="RoundRectangle 10"
+                        BackgroundColor="#F8F9FA"
+                        Padding="20">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="📖 LA CACCIA"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#1A237E" />
+
+                        <Label Text="{Binding Caccia.text}"
+                               FontSize="14"
+                               TextColor="#333333"
+                               LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 3. SEZIONE INFO COMPRIMIBILE -->
+                <Border Margin="20,0,20,20"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        BackgroundColor="White">
+                    <VerticalStackLayout Spacing="0">
+                        <!-- INTESTAZIONE CLICCABILE -->
+                        <Grid Padding="20,15"
+                                BackgroundColor="#F5F5F5">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleInfoCommand}" />
+                            </Grid.GestureRecognizers>
+
+                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                <Label Text="ℹ️"
+                                       FontSize="16" />
+                                <Label Text="INFO"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#1A237E" />
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding IsInfoEspanso, Converter={StaticResource BoolToFreccia}}"
+                                   FontSize="18"
+                                   TextColor="#666666"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <!-- CONTENUTO ESPANDIBILE -->
+                        <VerticalStackLayout IsVisible="{Binding IsInfoEspanso}"
+                                             Padding="20,15"
+                                             Spacing="12">
+                            <!-- DATI TEMPORALI -->
+                            <HorizontalStackLayout Spacing="15">
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="🗓️ PERIODO"
+                                           FontSize="12"
+                                           TextColor="#666666" />
+                                    <Label Text="{Binding TestoPeriodoFormattato}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#333333" />
+                                </VerticalStackLayout>
+
+                                <BoxView Color="#E0E0E0" WidthRequest="1" />
+
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="⏱️ DURATA"
+                                           FontSize="12"
+                                           TextColor="#666666" />
+                                    <Label Text="{Binding LunghezzaFormattata}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#333333" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <!-- DATI STRUTTURALI -->
+                            <HorizontalStackLayout Spacing="15">
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="🚩 TAPPE"
+                                           FontSize="12"
+                                           TextColor="#666666" />
+                                    <Label Text="{Binding TappeFormattate}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#333333" />
+                                </VerticalStackLayout>
+
+                                <BoxView Color="#E0E0E0" WidthRequest="1" />
+
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="📍 TIPO"
+                                           FontSize="12"
+                                           TextColor="#666666" />
+                                    <Label Text="{Binding CategoriaTesto}"
+                                           FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="#333333" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <!-- BADGE TOP -->
+                            <Border IsVisible="{Binding Caccia.IsTopCaccia}"
+                                    BackgroundColor="#FFF8E1"
+                                    Stroke="#FFD740"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="12,8"
+                                    HorizontalOptions="Start">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="🏆"
+                                           FontSize="14" />
+                                    <Label Text="CACCIA IN EVIDENZA"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#FF9800" />
+                                </HorizontalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 4. PULSANTI SECONDARI -->
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                       Spacing="20"
+                                       Margin="0,0,0,20">
+                    <Button Text="▶️ ASCOLTA"
+                            FontSize="14"
+                            BackgroundColor="#E3F2FD"
+                            TextColor="#2196F3"
+                            Command="{Binding AscoltaCommand}"
+                            Padding="20,12"
+                            CornerRadius="20" />
+
+                    <Button Text="🗺️ MAPPA"
+                            FontSize="14"
+                            BackgroundColor="#E8F5E8"
+                            TextColor="#4CAF50"
+                            Command="{Binding VediMappaCommand}"
+                            Padding="20,12"
+                            CornerRadius="20" />
+                </HorizontalStackLayout>
+
+                <!-- 5. PULSANTE PRIMARIO DINAMICO -->
+                <Button Text="{Binding TestoPulsantePrimario}"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        BackgroundColor="{Binding ColorePulsantePrimario}"
+                        TextColor="White"
+                        Command="{Binding AvviaCacciaCommand}"
+                        Margin="20,0,20,30"
+                        Padding="0,15"
+                        CornerRadius="25"
+                        HeightRequest="50" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

@@ -169,6 +169,8 @@ namespace Inveni.App.ViewModels
 
                     foreach (var gioco in giochi)
                     {
+                        Console.WriteLine($"Caccia: '{gioco.name}', ID={gioco.IdGioco}, _id={gioco._id}, IdUtente={gioco.IdUtente}");
+
                         // Filtra per data
                         if (gioco.dataInizio == null || gioco.dataFine == null)
                         {

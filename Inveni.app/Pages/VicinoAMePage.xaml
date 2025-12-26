@@ -90,38 +90,64 @@
                                             <Grid RowDefinitions="160, Auto, Auto, Auto" 
                                                   RowSpacing="0">
 
-                                                <!-- IMMAGINE 16:9 -->
-                                                <Image Grid.Row="0"
-                                                       Source="{Binding FotoSemplice}"
-                                                       Aspect="AspectFill"
-                                                       HeightRequest="160" />
+                                                <!-- IMMAGINE 16:9 + BADGE TOP -->
+                                                <Grid Grid.Row="0">
+                                                    <Image Source="{Binding FotoSemplice}" 
+           Aspect="AspectFill" 
+           HeightRequest="160" />
 
-                                                <!-- RIGA 1: NOME + BADGE TOP -->
+                                                    <Border IsVisible="{Binding IsTopCaccia}"
+            BackgroundColor="#99000000"
+            Stroke="White"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 6"
+            Padding="8,4"
+            HorizontalOptions="End"
+            VerticalOptions="Start"
+            Margin="10">
+                                                        <Label Text="TOP" 
+               FontSize="12" 
+               FontAttributes="Bold" 
+               TextColor="White" 
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
+                                                    </Border>
+                                                </Grid>
+
+                                                <!-- RIGA 1: NOME + Pulsante SCHEDA -->
                                                 <Grid Grid.Row="1"
                                                       ColumnDefinitions="*, Auto"
                                                       Padding="15,12,15,8">
-                                                    <Label Grid.Column="0"
-                                                           Text="{Binding name}"
-                                                           FontSize="18"
-                                                           FontAttributes="Bold"
-                                                           TextColor="#1A237E"
-                                                           LineBreakMode="TailTruncation"
-                                                           MaxLines="2" />
 
-                                                    <!-- BADGE TOP -->
+                                                    <!-- TITOLO (sinistra) -->
+                                                    <Label Grid.Column="0"
+                                                       Text="{Binding name}"
+                                                       FontSize="18"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       LineBreakMode="TailTruncation"
+                                                       MaxLines="2" />
+
+                                                    <!-- PULSANTE DETTAGLI (destra) -->
                                                     <Border Grid.Column="1"
-                                                            IsVisible="{Binding IsTopCaccia}"
-                                                            BackgroundColor="#FFD700"
-                                                            StrokeShape="RoundRectangle 6"
-                                                            Padding="8,4"
-                                                            HorizontalOptions="End"
-                                                            VerticalOptions="Center">
-                                                        <Label Text="TOP"
-                                                               FontSize="12"
-                                                               FontAttributes="Bold"
-                                                               TextColor="#1A237E"
-                                                               VerticalOptions="Center"
-                                                               HorizontalOptions="Center" />
+                                                        BackgroundColor="#4CAF50"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        StrokeShape="RoundRectangle 6"
+                                                        Padding="10,6"
+                                                        HorizontalOptions="End"
+                                                        VerticalOptions="Center">
+
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Tapped="OnDettagliTapped" />
+                                                        </Border.GestureRecognizers>
+
+                                                        <Label Text="DETTAGLI" 
+                                                           FontSize="12" 
+                                                           FontAttributes="Bold" 
+                                                           TextColor="White" 
+                                                           VerticalOptions="Center" 
+                                                           HorizontalOptions="Center" />
                                                     </Border>
                                                 </Grid>
 
@@ -261,38 +287,64 @@
                                             <Grid RowDefinitions="160, Auto, Auto, Auto" 
                                                   RowSpacing="0">
 
-                                                <!-- IMMAGINE 16:9 -->
-                                                <Image Grid.Row="0"
-                                                       Source="{Binding FotoSemplice}"
-                                                       Aspect="AspectFill"
-                                                       HeightRequest="160" />
+                                                <!-- IMMAGINE 16:9 + BADGE TOP -->
+                                                <Grid Grid.Row="0">
+                                                    <Image Source="{Binding FotoSemplice}" 
+           Aspect="AspectFill" 
+           HeightRequest="160" />
 
-                                                <!-- RIGA 1: NOME + BADGE TOP -->
+                                                    <Border IsVisible="{Binding IsTopCaccia}"
+            BackgroundColor="#99000000"
+            Stroke="White"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 6"
+            Padding="8,4"
+            HorizontalOptions="End"
+            VerticalOptions="Start"
+            Margin="10">
+                                                        <Label Text="TOP" 
+               FontSize="12" 
+               FontAttributes="Bold" 
+               TextColor="White" 
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
+                                                    </Border>
+                                                </Grid>
+
+                                                <!-- RIGA 1: NOME + Pulsante SCHEDA -->
                                                 <Grid Grid.Row="1"
                                                       ColumnDefinitions="*, Auto"
                                                       Padding="15,12,15,8">
-                                                    <Label Grid.Column="0"
-                                                           Text="{Binding name}"
-                                                           FontSize="18"
-                                                           FontAttributes="Bold"
-                                                           TextColor="#1A237E"
-                                                           LineBreakMode="TailTruncation"
-                                                           MaxLines="2" />
 
-                                                    <!-- BADGE TOP -->
+                                                    <!-- TITOLO (sinistra) -->
+                                                    <Label Grid.Column="0"
+                                                       Text="{Binding name}"
+                                                       FontSize="18"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       LineBreakMode="TailTruncation"
+                                                       MaxLines="2" />
+
+                                                    <!-- PULSANTE DETTAGLI (destra) -->
                                                     <Border Grid.Column="1"
-                                                            IsVisible="{Binding IsTopCaccia}"
-                                                            BackgroundColor="#FFD700"
-                                                            StrokeShape="RoundRectangle 6"
-                                                            Padding="8,4"
-                                                            HorizontalOptions="End"
-                                                            VerticalOptions="Center">
-                                                        <Label Text="TOP"
-                                                               FontSize="12"
-                                                               FontAttributes="Bold"
-                                                               TextColor="#1A237E"
-                                                               VerticalOptions="Center"
-                                                               HorizontalOptions="Center" />
+                                                        BackgroundColor="#4CAF50"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        StrokeShape="RoundRectangle 6"
+                                                        Padding="10,6"
+                                                        HorizontalOptions="End"
+                                                        VerticalOptions="Center">
+
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Tapped="OnDettagliTapped" />
+                                                        </Border.GestureRecognizers>
+
+                                                        <Label Text="DETTAGLI" 
+                                                           FontSize="12" 
+                                                           FontAttributes="Bold" 
+                                                           TextColor="White" 
+                                                           VerticalOptions="Center" 
+                                                           HorizontalOptions="Center" />
                                                     </Border>
                                                 </Grid>
 
@@ -432,38 +484,64 @@
                                             <Grid RowDefinitions="160, Auto, Auto, Auto" 
                                                   RowSpacing="0">
 
-                                                <!-- IMMAGINE 16:9 -->
-                                                <Image Grid.Row="0"
-                                                       Source="{Binding FotoSemplice}"
-                                                       Aspect="AspectFill"
-                                                       HeightRequest="160" />
+                                                <!-- IMMAGINE 16:9 + BADGE TOP -->
+                                                <Grid Grid.Row="0">
+                                                    <Image Source="{Binding FotoSemplice}" 
+           Aspect="AspectFill" 
+           HeightRequest="160" />
 
-                                                <!-- RIGA 1: NOME + BADGE TOP -->
+                                                    <Border IsVisible="{Binding IsTopCaccia}"
+            BackgroundColor="#99000000"
+            Stroke="White"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 6"
+            Padding="8,4"
+            HorizontalOptions="End"
+            VerticalOptions="Start"
+            Margin="10">
+                                                        <Label Text="TOP" 
+               FontSize="12" 
+               FontAttributes="Bold" 
+               TextColor="White" 
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
+                                                    </Border>
+                                                </Grid>
+
+                                                <!-- RIGA 1: NOME + Pulsante SCHEDA -->
                                                 <Grid Grid.Row="1"
                                                       ColumnDefinitions="*, Auto"
                                                       Padding="15,12,15,8">
-                                                    <Label Grid.Column="0"
-                                                           Text="{Binding name}"
-                                                           FontSize="18"
-                                                           FontAttributes="Bold"
-                                                           TextColor="#1A237E"
-                                                           LineBreakMode="TailTruncation"
-                                                           MaxLines="2" />
 
-                                                    <!-- BADGE TOP -->
+                                                    <!-- TITOLO (sinistra) -->
+                                                    <Label Grid.Column="0"
+                                                       Text="{Binding name}"
+                                                       FontSize="18"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1A237E"
+                                                       LineBreakMode="TailTruncation"
+                                                       MaxLines="2" />
+
+                                                    <!-- PULSANTE DETTAGLI (destra) -->
                                                     <Border Grid.Column="1"
-                                                            IsVisible="{Binding IsTopCaccia}"
-                                                            BackgroundColor="#FFD700"
-                                                            StrokeShape="RoundRectangle 6"
-                                                            Padding="8,4"
-                                                            HorizontalOptions="End"
-                                                            VerticalOptions="Center">
-                                                        <Label Text="TOP"
-                                                               FontSize="12"
-                                                               FontAttributes="Bold"
-                                                               TextColor="#1A237E"
-                                                               VerticalOptions="Center"
-                                                               HorizontalOptions="Center" />
+                                                        BackgroundColor="#4CAF50"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        StrokeShape="RoundRectangle 6"
+                                                        Padding="10,6"
+                                                        HorizontalOptions="End"
+                                                        VerticalOptions="Center">
+
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Tapped="OnDettagliTapped" />
+                                                        </Border.GestureRecognizers>
+
+                                                        <Label Text="DETTAGLI" 
+                                                           FontSize="12" 
+                                                           FontAttributes="Bold" 
+                                                           TextColor="White" 
+                                                           VerticalOptions="Center" 
+                                                           HorizontalOptions="Center" />
                                                     </Border>
                                                 </Grid>
 
