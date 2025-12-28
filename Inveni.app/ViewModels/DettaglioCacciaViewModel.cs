@@ -35,6 +35,7 @@ namespace Inveni.App.ViewModels
             set => SetProperty(ref _isInfoEspanso, value);
         }
 
+
         // Per il pulsante primario dinamico (per ora valori statici)
         public string TestoPulsantePrimario => "AVVIA LA CACCIA"; // Cambierà con logica API
         public Color ColorePulsantePrimario => Color.FromArgb("#FFD700"); // Giallo oro
@@ -96,6 +97,7 @@ namespace Inveni.App.ViewModels
                 else
                 {
                     Console.WriteLine($"✅ Caccia trovata: {Caccia.name}");
+                    Console.WriteLine($"FotoSemplice: '{Caccia?.FotoSemplice ?? "NULL"}'");
                     Console.WriteLine($"   Testo: {Caccia.text?.Substring(0, Math.Min(50, Caccia.text.Length))}...");
 
                     // Imposta il titolo della pagina
@@ -182,6 +184,8 @@ namespace Inveni.App.ViewModels
             await CaricaDettaglioCaccia();
         }
 
+
+
         // ============================================
         // PROPRIETÀ CALCOLATE PER LA UI
         // ============================================
@@ -208,17 +212,32 @@ namespace Inveni.App.ViewModels
         {
             get
             {
-                if (Caccia == null) return "N/D";
+                if (Caccia == null)
+                    return "N/D";
 
-                var colore = Caccia.ColoreBordoStato;
+                // Verifica se le date sono valide
+                if (!Caccia.dataInizio.HasValue || !Caccia.dataFine.HasValue)
+                    return "DATE NON DEFINITE";
 
-                // Confronta i valori ARGB (semplicistico ma funziona per i tuoi colori costanti)
-                if (colore.ToArgbHex() == "#FF4CAF50") // Verde
-                    return "ATTIVA";
-                else if (colore.ToArgbHex() == "#FFFF9800") // Arancione
+                DateTime oggi = DateTime.Now;
+                DateTime inizio = Caccia.dataInizio.Value;
+                DateTime fine = Caccia.dataFine.Value;
+
+                if (oggi < inizio)
+                {
+                    // Non ancora iniziata
                     return "IN PROGRAMMA";
-                else // Grigio o altro
-                    return "STORICA";
+                }
+                else if (oggi >= inizio && oggi <= fine)
+                {
+                    // In corso
+                    return "ATTIVA";
+                }
+                else // oggi > fine
+                {
+                    // Scaduta
+                    return "SCADUTA (SOLO DIVERTIMENTO)";
+                }
             }
         }
 
@@ -247,6 +266,121 @@ namespace Inveni.App.ViewModels
                 }
                 return "Caccia Standard";
             }
+        }
+
+        /// <summary>
+        /// Restituisce il testo formattato per il luogo: "Caccia a Comune - Località"
+        /// </summary>
+        public string TestoLuogoCompleto
+        {
+            get
+            {
+                if (Caccia == null)
+                    return "";
+
+                var luogo = "";
+
+                if (!string.IsNullOrWhiteSpace(Caccia.comune))
+                    luogo += Caccia.comune;
+
+                // Aggiungi località SOLO se diversa dal comune e non vuota
+                if (!string.IsNullOrWhiteSpace(Caccia.localitaCaccia) &&
+                    !Caccia.localitaCaccia.Equals(Caccia.comune, StringComparison.OrdinalIgnoreCase))
+                    luogo += " - " + Caccia.localitaCaccia;
+
+                return luogo;
+            }
+        }
+
+        /// <summary>
+        /// Restituisce il periodo formattato completo della caccia
+        /// </summary>
+        public string PeriodoCompleto
+        {
+            get
+            {
+                if (Caccia == null || !Caccia.dataInizio.HasValue || !Caccia.dataFine.HasValue)
+                    return "N/D";
+
+                return $"dal {Caccia.dataInizio.Value:dd/MM/yyyy} al {Caccia.dataFine.Value:dd/MM/yyyy}";
+            }
+        }
+
+        // ============================================
+        // PROPRIETÀ CALCOLATE PER I NUOVI CAMPI
+        // ============================================
+
+        /// <summary>
+        /// Indica se la caccia ha informazioni sul premio
+        /// </summary>
+        public bool HaPremio => !string.IsNullOrEmpty(Caccia?.premio);
+
+        /// <summary>
+        /// Indica se la caccia ha regole del gioco
+        /// </summary>
+        public bool HaRegole => !string.IsNullOrEmpty(Caccia?.comesigioca);
+
+        /// <summary>
+        /// Indica se la caccia ha una descrizione/storia
+        /// </summary>
+        public bool HaDescrizione => !string.IsNullOrEmpty(Caccia?.text);
+
+        // ============================================
+        // PROPRIETÀ PER GESTIRE GLI ACCORDION
+        // ============================================
+
+        private bool _isDescrizioneEspansa = true;
+        public bool IsDescrizioneEspansa
+        {
+            get => _isDescrizioneEspansa;
+            set => SetProperty(ref _isDescrizioneEspansa, value);
+        }
+
+        private bool _isPremioEspanso = false;
+        public bool IsPremioEspanso
+        {
+            get => _isPremioEspanso;
+            set => SetProperty(ref _isPremioEspanso, value);
+        }
+
+        private bool _isRegoleEspanso = false;
+        public bool IsRegoleEspanso
+        {
+            get => _isRegoleEspanso;
+            set => SetProperty(ref _isRegoleEspanso, value);
+        }
+
+        // ============================================
+        // COMANDI PER GLI ACCORDION
+        // ============================================
+
+        [RelayCommand]
+        private void ToggleDescrizione() => IsDescrizioneEspansa = !IsDescrizioneEspansa;
+
+        [RelayCommand]
+        private void TogglePremio() => IsPremioEspanso = !IsPremioEspanso;
+
+        [RelayCommand]
+        private void ToggleRegole() => IsRegoleEspanso = !IsRegoleEspanso;
+
+        // ============================================
+        // AGGIORNAMENTO OnCacciaChanged
+        // ============================================
+
+        partial void OnCacciaChanged(Gioco? value)
+        {
+            // Forza il ricalcolo delle proprietà dipendenti
+            OnPropertyChanged(nameof(TestoLuogoCompleto));
+            OnPropertyChanged(nameof(TestoStato));
+            OnPropertyChanged(nameof(CategoriaTesto));
+            OnPropertyChanged(nameof(TestoPeriodoFormattato));
+            OnPropertyChanged(nameof(LunghezzaFormattata));
+            OnPropertyChanged(nameof(TappeFormattate));
+
+            // NUOVE proprietà
+            OnPropertyChanged(nameof(HaDescrizione));
+            OnPropertyChanged(nameof(HaPremio));
+            OnPropertyChanged(nameof(HaRegole));
         }
     }
 }

@@ -8,10 +8,9 @@ namespace Inveni.App.Servizi;
 /// </summary>
 public class ApiServizio
 {
-    private const string UrlBase = "http://10.64.254.197:5000";  // RETE ILIAD
-    //private const string UrlBase = "http://192.168.137.1:5000";  // RETE VODAFONE
-    
-    //private const string UrlBase = "https://10.0.2.2:7124";  // EMULATORE
+    //private const string UrlBase = "http://10.64.254.197:5000";  // RETE ILIAD
+    //private const string UrlBase = "http://10.91.112.197:5000";  // RETE VODAFONE
+    private const string UrlBase = "https://10.0.2.2:7124";  // EMULATORE
 
     /// <summary>
     /// Ottiene la lista delle cacce disponibili dal backend
@@ -38,10 +37,10 @@ public class ApiServizio
                 Timeout = TimeSpan.FromSeconds(15)
             };
 
-            Console.WriteLine($"🌐 Chiamando API: {UrlBase}{url}");
+            //Console.WriteLine($"🌐 Chiamando API: {UrlBase}{url}");
 
             HttpResponseMessage risposta = await client.GetAsync(url);
-            Console.WriteLine($"📡 Status Code: {risposta.StatusCode}");
+            //Console.WriteLine($"📡 Status Code: {risposta.StatusCode}");
 
             if (!risposta.IsSuccessStatusCode)
             {
@@ -50,7 +49,7 @@ public class ApiServizio
             }
 
             string json = await risposta.Content.ReadAsStringAsync();
-            Console.WriteLine($"📄 Risposta ricevuta ({json.Length} caratteri)");
+            //Console.WriteLine($"📄 Risposta ricevuta ({json.Length} caratteri)");
 
             if (json.Length < 50)
             {
@@ -66,7 +65,7 @@ public class ApiServizio
                 return new List<Gioco>();
             }
 
-            Console.WriteLine($"✅ Trovate {risultato.giochi?.Count ?? 0} cacce");
+            //Console.WriteLine($"✅ Trovate {risultato.giochi?.Count ?? 0} cacce");
             return risultato.giochi ?? new List<Gioco>();
         }
         catch (Exception ex)
